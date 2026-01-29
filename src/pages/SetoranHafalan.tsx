@@ -6,12 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Progress } from "@/components/ui/progress";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
   Plus, 
   Download, 
@@ -20,24 +16,18 @@ import {
   Home,
   Target,
   RefreshCw,
-  CheckCircle,
-  Lock,
-  Unlock,
-  Eye,
-  X,
-  Award,
   Search
 } from "lucide-react";
 import { toast } from "sonner";
-import { JuzSelector } from "@/components/JuzSelector";
-import { SetoranCalendar } from "@/components/setoran/SetoranCalendar";
 import { DrillForm } from "@/components/setoran/DrillForm";
 import { getSurahsByJuz, Surah } from "@/lib/quran-data";
 import { format, subDays } from "date-fns";
 import { cn } from "@/lib/utils";
+import TambahSetoran from "@/pages/TambahSetoran";
+import TambahDrill from "@/pages/TambahDrill";
 
 // Jenis setoran
-type JenisSetoran = "setoran_baru" | "murojaah" | "tilawah" | "tilawah_rumah" | "drill";
+type FormTab = "setoran_baru" | "murojaah" | "tilawah" | "tilawah_rumah" | "drill";
 
 const jenisSetoranOptions = [
   { value: "setoran_baru", label: "Setoran Baru", icon: BookOpen, description: "Hafalan ayat/halaman baru" },
@@ -103,7 +93,7 @@ const SetoranHafalan = () => {
   
   // Dialog state
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("setoran_baru");
+  const [activeTab, setActiveTab] = useState<FormTab>("setoran_baru");
   
   // Form state
   const [selectedSantri, setSelectedSantri] = useState("");
@@ -234,200 +224,41 @@ const SetoranHafalan = () => {
                   </DialogDescription>
                 </DialogHeader>
                 
-                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as FormTab)} className="w-full">
                   <TabsList className="grid grid-cols-5 w-full">
-                    {jenisSetoranOptions.map((option) => (
-                      <TabsTrigger key={option.value} value={option.value} className="text-xs">
-                        <option.icon className="w-4 h-4 mr-1 hidden sm:inline" />
-                        {option.label.split(" ")[0]}
-                      </TabsTrigger>
-                    ))}
+                    <TabsTrigger value="setoran_baru">Setoran Baru</TabsTrigger>
+                    <TabsTrigger value="murojaah">Murojaah</TabsTrigger>
+                    <TabsTrigger value="tilawah">Tilawah</TabsTrigger>
+                    <TabsTrigger value="tilawah_rumah">Tilawah Rumah</TabsTrigger>
+                    <TabsTrigger value="drill">Drill</TabsTrigger>
                   </TabsList>
 
-                  {jenisSetoranOptions.map((option) => (
-                    <TabsContent key={option.value} value={option.value} className="space-y-4 mt-4">
-                      {/* Info jenis */}
-                      <Card className="bg-primary/5 border-primary/20">
-                        <CardContent className="pt-4">
-                          <div className="flex items-center gap-3">
-                            <option.icon className="w-8 h-8 text-primary" />
-                            <div>
-                              <p className="font-medium">{option.label}</p>
-                              <p className="text-sm text-muted-foreground">{option.description}</p>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
+                  <TabsContent value="setoran_baru" className="mt-4">
+                    <TambahSetoran />
+                  </TabsContent>
 
-                      {/* Pilih Santri */}
-                      <div className="space-y-2">
-                        <Label>Pilih Santri *</Label>
-                        <Select value={selectedSantri} onValueChange={setSelectedSantri}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Pilih santri" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {mockSantri.map(santri => (
-                              <SelectItem key={santri.id} value={santri.id}>
-                                {santri.nama} - {santri.nis}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        {selectedSantriData && (
-                          <p className="text-sm text-muted-foreground">
-                            Halaqoh: {selectedSantriData.halaqoh}
-                          </p>
-                        )}
-                      </div>
+                  <TabsContent value="murojaah" className="mt-4">
+                    <div className="p-6 text-center text-muted-foreground border rounded-lg">
+                      Form murojaah belum tersedia.
+                    </div>
+                  </TabsContent>
 
-                      {/* Calendar untuk pilih tanggal - hanya muncul jika santri dipilih */}
-                      {selectedSantri && (
-                        <SetoranCalendar
-                          santriId={selectedSantri}
-                          setoranRecords={mockSetoranRecords}
-                          selectedDate={selectedDate}
-                          onSelectDate={setSelectedDate}
-                        />
-                      )}
+                  <TabsContent value="tilawah" className="mt-4">
+                    <div className="p-6 text-center text-muted-foreground border rounded-lg">
+                      Form tilawah belum tersedia.
+                    </div>
+                  </TabsContent>
 
-                      {/* Form detail - muncul jika tanggal dipilih */}
-                      {selectedDate && (
-                        <>
-                          {/* Juz & Surah */}
-                          <div className="grid grid-cols-2 gap-4">
-                            <JuzSelector value={juz} onValueChange={setJuz} required />
-                            <div className="space-y-2">
-                              <Label>Surah *</Label>
-                              <Select value={surah} onValueChange={setSurah} disabled={!juz}>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Pilih surah" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {surahByJuz.map((s) => (
-                                    <SelectItem key={s.number} value={String(s.number)}>
-                                      {s.number}. {s.name}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-                          </div>
+                  <TabsContent value="tilawah_rumah" className="mt-4">
+                    <div className="p-6 text-center text-muted-foreground border rounded-lg">
+                      Form tilawah rumah belum tersedia.
+                    </div>
+                  </TabsContent>
 
-                          {/* Ayat range */}
-                          {selectedSurah && (
-                            <div className="grid grid-cols-2 gap-4">
-                              <div className="space-y-2">
-                                <Label>Ayat Dari</Label>
-                                <Input
-                                  type="number"
-                                  min={1}
-                                  max={selectedSurah.numberOfAyahs}
-                                  value={ayatDari}
-                                  onChange={(e) => setAyatDari(e.target.value)}
-                                />
-                              </div>
-                              <div className="space-y-2">
-                                <Label>Ayat Sampai</Label>
-                                <Input
-                                  type="number"
-                                  min={Number(ayatDari)}
-                                  max={selectedSurah.numberOfAyahs}
-                                  value={ayatSampai}
-                                  onChange={(e) => setAyatSampai(e.target.value)}
-                                />
-                              </div>
-                            </div>
-                          )}
+                  <TabsContent value="drill" className="mt-4">
+                    <TambahDrill />
+                  </TabsContent>
 
-                          {/* Drill level - hanya untuk drill */}
-                          {option.value === "drill" && juz && (
-                            <div className="space-y-2">
-                              <Label>Level Drill *</Label>
-                              <Select value={drillLevel} onValueChange={setDrillLevel}>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Pilih level drill" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {getAppropriateDrillLevels(Number(juz)).map(level => (
-                                    <SelectItem key={level.id} value={level.id}>
-                                      <span className="flex items-center gap-2">
-                                        <span>{level.icon}</span>
-                                        <span>{level.name}</span>
-                                        <span className="text-muted-foreground text-xs">- {level.desc}</span>
-                                      </span>
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                              {drillLevel === "tasmi1Juz" && (
-                                <div className="p-3 bg-yellow-50 dark:bg-yellow-950/30 rounded-lg border border-yellow-200">
-                                  <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                                    <Award className="w-4 h-4 inline mr-1" />
-                                    Setelah lulus Tasmi' 1 Juz, santri bisa didaftarkan ke Ujian Tasmi'!
-                                  </p>
-                                </div>
-                              )}
-                            </div>
-                          )}
-
-                          {/* Penilaian */}
-                          <Card>
-                            <CardHeader className="pb-3">
-                              <CardTitle className="text-sm">Penilaian</CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                              <div className="space-y-2">
-                                <Label>Jumlah Kesalahan</Label>
-                                <Input 
-                                  type="number" 
-                                  value={jumlahKesalahan}
-                                  onChange={(e) => setJumlahKesalahan(e.target.value)}
-                                  min="0"
-                                />
-                                <p className="text-xs text-muted-foreground">
-                                  Setiap kesalahan mengurangi 1 poin dari 100
-                                </p>
-                              </div>
-
-                              <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                                <Label>Nilai Kelancaran</Label>
-                                <div className="text-right">
-                                  <span className={cn(
-                                    "text-2xl font-bold",
-                                    nilaiKelancaran >= (option.value === "drill" ? BATAS_LULUS_DRILL : BATAS_LANCAR)
-                                      ? "text-primary"
-                                      : "text-destructive"
-                                  )}>
-                                    {nilaiKelancaran}
-                                  </span>
-                                  <p className="text-xs text-muted-foreground">
-                                    {option.value === "drill" 
-                                      ? `Batas lulus: ${BATAS_LULUS_DRILL}`
-                                      : `Batas lancar: ${BATAS_LANCAR}`
-                                    }
-                                  </p>
-                                </div>
-                              </div>
-
-                              <div className="space-y-2">
-                                <Label>Catatan</Label>
-                                <Textarea 
-                                  placeholder="Catatan tajwid, makharijul huruf, dll..."
-                                  value={catatan}
-                                  onChange={(e) => setCatatan(e.target.value)}
-                                />
-                              </div>
-                            </CardContent>
-                          </Card>
-
-                          <Button onClick={handleSubmit} className="w-full bg-primary hover:bg-primary/90">
-                            Simpan {option.label}
-                          </Button>
-                        </>
-                      )}
-                    </TabsContent>
-                  ))}
                 </Tabs>
               </DialogContent>
             </Dialog>
