@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import Layout from "@/components/MobileLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -126,7 +125,7 @@ const SetoranHafalan = () => {
   };
 
   return (
-    <Layout>
+    <>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -486,7 +485,7 @@ const SetoranHafalan = () => {
           </CardContent>
         </Card>
       </div>
-    </Layout>
+    </>
   );
 };
 

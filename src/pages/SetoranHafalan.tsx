@@ -28,6 +28,12 @@ import TambahDrill from "@/pages/TambahDrill";
 
 // Jenis setoran
 type FormTab = "setoran_baru" | "murojaah" | "tilawah" | "tilawah_rumah" | "drill";
+type SetoranRecord = {
+  tanggal: Date;
+  santriId: string;
+  jenis: JenisSetoran;
+  status: "selesai" | "pending";
+};
 
 const jenisSetoranOptions = [
   { value: "setoran_baru", label: "Setoran Baru", icon: BookOpen, description: "Hafalan ayat/halaman baru" },
@@ -68,10 +74,10 @@ const mockSantri = [
 ];
 
 // Mock setoran records
-const mockSetoranRecords = [
-  { tanggal: subDays(new Date(), 1), santriId: "1", jenis: "setoran_baru" as JenisSetoran, status: "selesai" as const },
-  { tanggal: subDays(new Date(), 2), santriId: "1", jenis: "murojaah" as JenisSetoran, status: "selesai" as const },
-  { tanggal: subDays(new Date(), 3), santriId: "1", jenis: "setoran_baru" as JenisSetoran, status: "selesai" as const },
+const mockSetoranRecords: SetoranRecord[] = [
+  { tanggal: subDays(new Date(), 1), santriId: "1", jenis: "setoran_baru", status: "selesai" },
+  { tanggal: subDays(new Date(), 2), santriId: "1", jenis: "murojaah", status: "selesai" },
+  { tanggal: subDays(new Date(), 3), santriId: "1", jenis: "setoran_baru", status: "selesai" },
 ];
 
 // Mock setoran list untuk tabel
