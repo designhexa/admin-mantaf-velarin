@@ -16,9 +16,14 @@ import { format } from "date-fns";
 /* ================= MOCK DATA ================= */
 
 const mockSantri = [
-  { id: "1", nama: "Muhammad Faiz", nis: "S001", halaqoh: "Halaqoh Al-Azhary" },
-  { id: "2", nama: "Fatimah Zahra", nis: "S003", halaqoh: "Halaqoh Al-Furqon" },
-  { id: "3", nama: "Aisyah Nur", nis: "S002", halaqoh: "Halaqoh Al-Azhary" },
+  { id: "1", nama: "Muhammad Faiz", nis: "S001", halaqoh: "Halaqoh Al-Azhary", halaqohId: "h1" },
+  { id: "2", nama: "Fatimah Zahra", nis: "S003", halaqoh: "Halaqoh Al-Furqon", halaqohId: "h2" },
+  { id: "3", nama: "Aisyah Nur", nis: "S002", halaqoh: "Halaqoh Al-Azhary", halaqohId: "h1" },
+];
+
+const mockHalaqoh = [
+  { id: "h1", nama_halaqoh: "Halaqoh Al-Azhary" },
+  { id: "h2", nama_halaqoh: "Halaqoh Al-Furqon" },
 ];
 
 const BATAS_LANCAR_SETORAN = 80;
@@ -30,6 +35,7 @@ function tentukanStatusSetoran(nilai: number): "Lancar" | "Kurang" {
 /* ================= COMPONENT ================= */
 
 const TambahSetoran = () => {
+  const [halaqohFilter, setHalaqohFilter] = useState("");
   const [selectedSantri, setSelectedSantri] = useState("");
   const [tanggalSetoran, setTanggalSetoran] = useState<Date>();
   const [juz, setJuz] = useState("");
@@ -38,6 +44,11 @@ const TambahSetoran = () => {
   const [ayatSampai, setAyatSampai] = useState("7");
   const [jumlahKesalahan, setJumlahKesalahan] = useState("0");
   const [catatanTajwid, setCatatanTajwid] = useState("");
+
+  const filteredSantri = useMemo(() => {
+    if (!halaqohFilter) return mockSantri;
+    return mockSantri.filter(s => s.halaqohId === halaqohFilter);
+  }, [halaqohFilter]);
 
   const selectedSantriData = mockSantri.find(s => s.id === selectedSantri);
 
@@ -83,6 +94,7 @@ const TambahSetoran = () => {
     );
 
     // reset
+    setHalaqohFilter("");
     setSelectedSantri("");
     setTanggalSetoran(undefined);
     setJuz("");
@@ -104,6 +116,30 @@ const TambahSetoran = () => {
       </CardHeader>
       <CardContent className="space-y-4">
 
+        {/* Filter Halaqoh */}
+        <div className="space-y-2">
+          <Label>Filter Halaqoh</Label>
+          <Select
+            value={halaqohFilter || "all"}
+            onValueChange={(v) => {
+              setHalaqohFilter(v === "all" ? "" : v);
+              setSelectedSantri(""); // Reset santri when halaqoh changes
+            }}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Semua Halaqoh" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Semua Halaqoh</SelectItem>
+              {mockHalaqoh.map((h) => (
+                <SelectItem key={h.id} value={h.id}>
+                  {h.nama_halaqoh}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
         {/* Santri */}
         <div className="space-y-2">
           <Label>Pilih Santri *</Label>
@@ -112,9 +148,9 @@ const TambahSetoran = () => {
               <SelectValue placeholder="Pilih santri" />
             </SelectTrigger>
             <SelectContent>
-              {mockSantri.map((s) => (
+              {filteredSantri.map((s) => (
                 <SelectItem key={s.id} value={s.id}>
-                  {s.nama}
+                  {s.nama} ({s.nis})
                 </SelectItem>
               ))}
             </SelectContent>
