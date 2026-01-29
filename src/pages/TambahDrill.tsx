@@ -1,255 +1,303 @@
-import { useState, useMemo } from "react";
+import { FC } from "react";
+import {
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import { Plus, X, Lock, CheckCircle, AlertCircle, CalendarIcon } from "lucide-react";
-import { JuzSelector } from "@/components/JuzSelector";
-import { getSurahsByJuz, Surah } from "@/lib/quran-data";
+import { Badge } from "@/components/ui/badge";
+import { CalendarIcon, Plus, Unlock, Lock, FileText, X, Save, Trophy, RotateCcw, CheckCircle, AlertCircle } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { toast } from "sonner";
+import { JuzSelector } from "@/components/JuzSelector";
 
-/* =======================
-   Mock data (sementara)
-======================= */
+// ================= TYPES =================
 
-const mockSantri = [
-  { id: "1", nama: "Muhammad Faiz" },
-  { id: "2", nama: "Fatimah Zahra" },
-  { id: "3", nama: "Aisyah Nur" },
-];
+export interface TambahDrillProps {
+  formHalaqohFilter: string;
+  setFormHalaqohFilter: (v: string) => void;
+  halaqohList: any[];
+  selectedSantri: string;
+  setSelectedSantri: (v: string) => void;
+  filteredSantriForForm: any[];
 
-const drillLevels = [
-  { id: "drill1", name: "Drill 1", icon: "📘" },
-  { id: "drill2", name: "Drill 2", icon: "📗" },
-  { id: "drillHalfJuz", name: "Drill ½ Juz", icon: "📙" },
-  { id: "drillFirstHalf", name: "½ Juz Pertama", icon: "📕" },
-  { id: "drillSecondHalf", name: "½ Juz Kedua", icon: "📓" },
-  { id: "tasmi1Juz", name: "Tasmi' 1 Juz", icon: "🏆" },
-];
+  tanggalDrill?: Date;
+  setTanggalDrill: (d?: Date) => void;
 
-const BATAS_LULUS = 88;
+  juz: string;
+  setJuz: (v: string) => void;
 
-/* =======================
-   Types
-======================= */
+  drillLevel: string;
+  handleDrillLevelChange: (v: string) => void;
+  drillsForJuz: any[];
+  isDrillUnlocked: (santriId: string, drillNumber: number, juz: number) => boolean;
+  selectedDrill: any;
 
-interface DrillSurahEntry {
-  id: string;
-  surahNumber: number;
-  surahName: string;
-  ayatDari: number;
-  ayatSampai: number;
+  isPageBased: boolean;
+  manualDrills: any[];
+  completedPages: number[];
+  handleAddManualDrill: () => void;
+  handleManualDrillChange: (id: string, field: string, value: number) => void;
+  handleRemoveManualDrill: (id: string) => void;
+
+  surahEntries: any[];
+  surahByJuz: any[];
+  handleAddSurahEntry: () => void;
+  handleRemoveSurahEntry: (id: string) => void;
+  handleSurahEntryChange: (id: string, field: string, value: any) => void;
+
+  jumlahKesalahan: string;
+  setJumlahKesalahan: (v: string) => void;
+  nilaiKelancaran: number;
+  BATAS_LULUS: number;
+  BATAS_KESALAHAN: number;
+
+  catatanTajwid: string;
+  setCatatanTajwid: (v: string) => void;
+
+  handleSaveDrill: () => void;
+  handleLulusDrill: () => void;
+  handleUlangiDrill: () => void;
+
+  formatDrillDescription: (d: any) => string;
+  CalendarComponent: any;
 }
 
-/* =======================
-   Component
-======================= */
+// ================= COMPONENT =================
 
-const TambahDrill = () => {
-  const [selectedSantri, setSelectedSantri] = useState("");
-  const [tanggalDrill, setTanggalDrill] = useState<Date>();
-  const [juz, setJuz] = useState("");
-  const [drillLevel, setDrillLevel] = useState("");
-  const [jumlahKesalahan, setJumlahKesalahan] = useState("0");
-  const [catatanTajwid, setCatatanTajwid] = useState("");
-
-  const [surahEntries, setSurahEntries] = useState<DrillSurahEntry[]>([
-    { id: "1", surahNumber: 0, surahName: "", ayatDari: 1, ayatSampai: 7 },
-  ]);
-
-  const surahByJuz: Surah[] = useMemo(() => {
-    if (!juz) return [];
-    return getSurahsByJuz(Number(juz));
-  }, [juz]);
-
-  const nilaiKelancaran = Math.max(0, 100 - parseInt(jumlahKesalahan || "0"));
-
-  const handleAddSurahEntry = () => {
-    setSurahEntries((prev) => [
-      ...prev,
-      { id: Date.now().toString(), surahNumber: 0, surahName: "", ayatDari: 1, ayatSampai: 7 },
-    ]);
-  };
-
-  const handleRemoveSurahEntry = (id: string) => {
-    if (surahEntries.length > 1) {
-      setSurahEntries((prev) => prev.filter((e) => e.id !== id));
-    }
-  };
-
-  const handleSurahEntryChange = (id: string, field: keyof DrillSurahEntry, value: number | string) => {
-    setSurahEntries((prev) =>
-      prev.map((entry) => {
-        if (entry.id === id) {
-          if (field === "surahNumber") {
-            const surah = surahByJuz.find((s) => s.number === Number(value));
-            return {
-              ...entry,
-              surahNumber: Number(value),
-              surahName: surah?.name || "",
-              ayatDari: 1,
-              ayatSampai: surah?.numberOfAyahs || 7,
-            };
-          }
-          return { ...entry, [field]: value };
-        }
-        return entry;
-      })
-    );
-  };
-
-  const handleSubmit = () => {
-    if (!selectedSantri || !tanggalDrill || !juz || !drillLevel) {
-      toast.error("Lengkapi data wajib terlebih dahulu");
-      return;
-    }
-
-    toast.success("Drill berhasil disimpan");
-
-    // reset
-    setSelectedSantri("");
-    setTanggalDrill(undefined);
-    setJuz("");
-    setDrillLevel("");
-    setJumlahKesalahan("0");
-    setCatatanTajwid("");
-    setSurahEntries([{ id: "1", surahNumber: 0, surahName: "", ayatDari: 1, ayatSampai: 7 }]);
-  };
+const TambahDrill: FC<TambahDrillProps> = (props) => {
+  const {
+    formHalaqohFilter,
+    setFormHalaqohFilter,
+    halaqohList,
+    selectedSantri,
+    setSelectedSantri,
+    filteredSantriForForm,
+    tanggalDrill,
+    setTanggalDrill,
+    juz,
+    setJuz,
+    drillLevel,
+    handleDrillLevelChange,
+    drillsForJuz,
+    isDrillUnlocked,
+    selectedDrill,
+    isPageBased,
+    manualDrills,
+    completedPages,
+    handleAddManualDrill,
+    handleManualDrillChange,
+    handleRemoveManualDrill,
+    surahEntries,
+    surahByJuz,
+    handleAddSurahEntry,
+    handleRemoveSurahEntry,
+    handleSurahEntryChange,
+    jumlahKesalahan,
+    setJumlahKesalahan,
+    nilaiKelancaran,
+    BATAS_LULUS,
+    BATAS_KESALAHAN,
+    catatanTajwid,
+    setCatatanTajwid,
+    handleSaveDrill,
+    handleLulusDrill,
+    handleUlangiDrill,
+    formatDrillDescription,
+    CalendarComponent,
+  } = props;
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-2xl font-bold">Tambah Drill Hafalan</h1>
-      </div>
+    <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+      <DialogHeader>
+        <DialogTitle>Tambah Drill Hafalan</DialogTitle>
+        <DialogDescription>
+          Masukkan penilaian drill hafalan untuk santri
+        </DialogDescription>
+      </DialogHeader>
 
-      {/* Santri */}
-      <div className="space-y-2">
-        <Label>Pilih Santri *</Label>
-        <Select value={selectedSantri} onValueChange={setSelectedSantri}>
-          <SelectTrigger>
-            <SelectValue placeholder="Pilih santri" />
-          </SelectTrigger>
-          <SelectContent>
-            {mockSantri.map((s) => (
-              <SelectItem key={s.id} value={s.id}>
-                {s.nama}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {/* Tanggal */}
-      <div className="space-y-2">
-        <Label>Tanggal Drill *</Label>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button variant="outline" className="w-full justify-start">
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {tanggalDrill ? format(tanggalDrill, "dd/MM/yyyy") : "Pilih tanggal"}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
-            <CalendarComponent mode="single" selected={tanggalDrill} onSelect={setTanggalDrill} />
-          </PopoverContent>
-        </Popover>
-      </div>
-
-      <JuzSelector value={juz} onValueChange={setJuz} required />
-
-      {/* Level drill */}
-      <div className="space-y-2">
-        <Label>Level Drill *</Label>
-        <Select value={drillLevel} onValueChange={setDrillLevel}>
-          <SelectTrigger>
-            <SelectValue placeholder="Pilih level drill" />
-          </SelectTrigger>
-          <SelectContent>
-            {drillLevels.map((level) => (
-              <SelectItem key={level.id} value={level.id}>
-                {level.icon} {level.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {/* Materi */}
-      <Card className="border-dashed">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm flex justify-between">
-            Materi Drill
-            <Button size="sm" variant="outline" onClick={handleAddSurahEntry} disabled={!juz}>
-              <Plus className="w-3 h-3 mr-1" /> Tambah
-            </Button>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {surahEntries.map((entry, idx) => {
-            const selectedSurah = surahByJuz.find((s) => s.number === entry.surahNumber);
-            return (
-              <div key={entry.id} className="border p-3 rounded space-y-2 relative">
-                {surahEntries.length > 1 && (
-                  <Button size="icon" variant="ghost" className="absolute right-2 top-2" onClick={() => handleRemoveSurahEntry(entry.id)}>
-                    <X className="w-4 h-4" />
-                  </Button>
-                )}
-
-                <Badge>Surat {idx + 1}</Badge>
-
-                <Select
-                  value={entry.surahNumber ? String(entry.surahNumber) : ""}
-                  onValueChange={(v) => handleSurahEntryChange(entry.id, "surahNumber", v)}
-                  disabled={!juz}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Pilih surah" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {surahByJuz.map((s) => (
-                      <SelectItem key={s.number} value={String(s.number)}>
-                        {s.number}. {s.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <Input type="number" value={entry.ayatDari} onChange={(e) => handleSurahEntryChange(entry.id, "ayatDari", Number(e.target.value))} />
-                  <Input type="number" value={entry.ayatSampai} onChange={(e) => handleSurahEntryChange(entry.id, "ayatSampai", Number(e.target.value))} />
-                </div>
-              </div>
-            );
-          })}
-        </CardContent>
-      </Card>
-
-      {/* Penilaian */}
-      <div className="space-y-2">
-        <Label>Jumlah Kesalahan</Label>
-        <Input type="number" value={jumlahKesalahan} onChange={(e) => setJumlahKesalahan(e.target.value)} />
-
-        <div className="flex justify-between bg-muted p-3 rounded">
-          <span>Nilai</span>
-          <span className={cn("font-bold", nilaiKelancaran >= BATAS_LULUS ? "text-green-600" : "text-destructive")}>
-            {nilaiKelancaran}
-          </span>
+      <div className="space-y-4 py-4">
+        {/* Filter Halaqoh */}
+        <div className="space-y-2">
+          <Label>Filter Halaqoh</Label>
+          <Select
+            value={formHalaqohFilter || "all"}
+            onValueChange={(v) => setFormHalaqohFilter(v === "all" ? "" : v)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Semua Halaqoh" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Semua Halaqoh</SelectItem>
+              {halaqohList.map((h) => (
+                <SelectItem key={h.id} value={h.id}>
+                  {h.nama_halaqoh}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
-        <Textarea placeholder="Catatan tajwid..." value={catatanTajwid} onChange={(e) => setCatatanTajwid(e.target.value)} />
-      </div>
+        {/* Santri */}
+        <div className="space-y-2">
+          <Label>Pilih Santri *</Label>
+          <Select value={selectedSantri} onValueChange={setSelectedSantri}>
+            <SelectTrigger>
+              <SelectValue placeholder="Pilih santri" />
+            </SelectTrigger>
+            <SelectContent>
+              {filteredSantriForForm.map((s) => (
+                <SelectItem key={s.id} value={s.id}>
+                  {s.nama} ({s.nis})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-      <Button className="w-full" onClick={handleSubmit}>
-        Simpan Drill
-      </Button>
-    </div>
+        {/* Tanggal */}
+        <div className="space-y-2">
+          <Label>Tanggal Drill *</Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-full justify-start text-left font-normal",
+                  !tanggalDrill && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {tanggalDrill ? format(tanggalDrill, "dd/MM/yyyy") : "Pilih tanggal"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <CalendarComponent
+                mode="single"
+                selected={tanggalDrill}
+                onSelect={setTanggalDrill}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+
+        <JuzSelector value={juz} onValueChange={setJuz} required />
+
+        {/* Level Drill */}
+        <div className="space-y-2">
+          <Label>Level Drill</Label>
+          <Select value={drillLevel} onValueChange={handleDrillLevelChange}>
+            <SelectTrigger>
+              <SelectValue placeholder="Pilih level drill" />
+            </SelectTrigger>
+            <SelectContent>
+              {drillsForJuz.map((drill) => {
+                const unlocked = selectedSantri
+                  ? isDrillUnlocked(selectedSantri, drill.drillNumber, Number(juz))
+                  : drill.drillNumber === 1;
+
+                return (
+                  <SelectItem
+                    key={drill.drillNumber}
+                    value={String(drill.drillNumber)}
+                    disabled={!unlocked}
+                  >
+                    <span className="flex items-center gap-2">
+                      {unlocked ? (
+                        <Unlock className="w-3 h-3 text-green-500" />
+                      ) : (
+                        <Lock className="w-3 h-3 text-muted-foreground" />
+                      )}
+                      {drill.name}
+                    </span>
+                  </SelectItem>
+                );
+              })}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Penilaian */}
+        <div className="pt-4 border-t space-y-4">
+          <h4 className="font-semibold">Penilaian</h4>
+
+          <div className="space-y-2">
+            <Label>Jumlah Kesalahan *</Label>
+            <Input
+              type="number"
+              value={jumlahKesalahan}
+              min={0}
+              onChange={(e) => setJumlahKesalahan(e.target.value)}
+            />
+          </div>
+
+          <div className="flex justify-between p-3 bg-muted rounded-lg">
+            <Label>Nilai Kelancaran</Label>
+            <span
+              className={cn(
+                "text-xl font-bold",
+                nilaiKelancaran >= BATAS_LULUS ? "text-green-600" : "text-destructive"
+              )}
+            >
+              {nilaiKelancaran}
+            </span>
+          </div>
+
+          <Card
+            className={cn(
+              "p-3 border-2",
+              nilaiKelancaran >= BATAS_LULUS
+                ? "border-green-500 bg-green-50"
+                : "border-destructive bg-destructive/10"
+            )}
+          >
+            <div className="flex gap-3">
+              {nilaiKelancaran >= BATAS_LULUS ? (
+                <CheckCircle className="text-green-600" />
+              ) : (
+                <AlertCircle className="text-destructive" />
+              )}
+              <div className="text-sm">
+                Batas lulus: {BATAS_LULUS} | Maks kesalahan: {BATAS_KESALAHAN}
+              </div>
+            </div>
+          </Card>
+
+          <div className="space-y-2">
+            <Label>Catatan Tajwid</Label>
+            <Textarea
+              value={catatanTajwid}
+              onChange={(e) => setCatatanTajwid(e.target.value)}
+            />
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="grid grid-cols-3 gap-2 pt-4">
+          <Button variant="outline" onClick={handleSaveDrill}>
+            <Save className="w-4 h-4 mr-1" /> Simpan
+          </Button>
+          <Button
+            className="bg-green-600 hover:bg-green-700"
+            disabled={nilaiKelancaran < BATAS_LULUS}
+            onClick={handleLulusDrill}
+          >
+            <Trophy className="w-4 h-4 mr-1" /> Lulus
+          </Button>
+          <Button variant="destructive" onClick={handleUlangiDrill}>
+            <RotateCcw className="w-4 h-4 mr-1" /> Ulangi
+          </Button>
+        </div>
+      </div>
+    </DialogContent>
   );
 };
 
