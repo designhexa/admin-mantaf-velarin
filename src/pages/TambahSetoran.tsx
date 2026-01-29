@@ -253,5 +253,6 @@ const TambahSetoran = () => {
     </Button>
   </div>
 );
+};
 
 export default TambahSetoran;
