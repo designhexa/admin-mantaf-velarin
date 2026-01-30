@@ -16,7 +16,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { CalendarIcon, Plus, X } from "lucide-react";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardTitle,
+} from "@/components/ui/card";
+import { CalendarIcon, Plus, X, FileText } from "lucide-react";
 import { format } from "date-fns";
 import {
   Popover,
@@ -32,6 +38,11 @@ import {
   DrillDefinition,
 } from "@/lib/drill-data";
 
+/* ================= CONST ================= */
+
+const BATAS_LULUS = 80;
+const BATAS_KESALAHAN = 5;
+
 /* ================= TYPES ================= */
 
 interface ManualPage {
@@ -39,17 +50,7 @@ interface ManualPage {
   page: number;
 }
 
-interface ManualSurah {
-  id: string;
-  surahName: string;
-  ayatStart?: number;
-  ayatEnd?: number;
-}
-
 /* ================= COMPONENT ================= */
-
-const BATAS_LULUS = 80;
-const BATAS_KESALAHAN = 5;
 
 const TambahDrill: FC<any> = ({
   halaqohList,
@@ -66,43 +67,42 @@ const TambahDrill: FC<any> = ({
   const [selectedDrill, setSelectedDrill] =
     useState<DrillDefinition | null>(null);
 
-  const drills = useMemo(() => {
+  const drills = useMemo<DrillDefinition[]>(() => {
     if (!juz) return [];
     return getDrillsForJuz(Number(juz));
   }, [juz]);
 
-  const isPageBased = selectedDrill?.type === "page";
-
-  /* ===== INPUT STATE ===== */
+  /* ===== MANUAL INPUT (PAGE) ===== */
   const [pages, setPages] = useState<ManualPage[]>([]);
-  const [surahs, setSurahs] = useState<ManualSurah[]>([]);
+  const [manualDrills, setManualDrills] = useState<
+    { id: string; pageStart: number }[]
+  >([]);
 
-  /* ===== AUTO INIT SAAT DRILL DIPILIH ===== */
-  useEffect(() => {
-    if (!selectedDrill) {
-      setPages([]);
-      setSurahs([]);
-      return;
-    }
+  const handleAddManualDrill = () => {
+    if (!selectedDrill) return;
+    setManualDrills((m) => [
+      ...m,
+      {
+        id: crypto.randomUUID(),
+        pageStart: selectedDrill.pageStart ?? 1,
+      },
+    ]);
+  };
 
-    if (selectedDrill.type === "page") {
-      setPages([
-        {
-          id: crypto.randomUUID(),
-          page: selectedDrill.pageStart ?? 1,
-        },
-      ]);
-      setSurahs([]);
-    } else {
-      setSurahs([
-        {
-          id: crypto.randomUUID(),
-          surahName: "",
-        },
-      ]);
-      setPages([]);
-    }
-  }, [selectedDrill]);
+  const handleManualDrillChange = (
+    id: string,
+    value: number
+  ) => {
+    setManualDrills((m) =>
+      m.map((d) =>
+        d.id === id ? { ...d, pageStart: value } : d
+      )
+    );
+  };
+
+  const handleRemoveManualDrill = (id: string) => {
+    setManualDrills((m) => m.filter((d) => d.id !== id));
+  };
 
   /* ===== PENILAIAN ===== */
   const [jumlahKesalahan, setJumlahKesalahan] = useState(0);
@@ -111,6 +111,15 @@ const TambahDrill: FC<any> = ({
     100 - jumlahKesalahan * BATAS_KESALAHAN
   );
   const [catatan, setCatatan] = useState("");
+
+  /* ===== RESET SAAT DRILL GANTI ===== */
+  useEffect(() => {
+    setPages([]);
+    setManualDrills([]);
+  }, [selectedDrill]);
+
+  /* ===== DRILL TYPE ===== */
+  const isPageBased = selectedDrill?.type === "page";
 
   /* ================= RENDER ================= */
 
@@ -162,7 +171,9 @@ const TambahDrill: FC<any> = ({
             <PopoverTrigger asChild>
               <Button variant="outline" className="w-full justify-start">
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {tanggal ? format(tanggal, "dd/MM/yyyy") : "Pilih tanggal"}
+                {tanggal
+                  ? format(tanggal, "dd/MM/yyyy")
+                  : "Pilih tanggal"}
               </Button>
             </PopoverTrigger>
             <PopoverContent>
@@ -178,128 +189,101 @@ const TambahDrill: FC<any> = ({
         {/* Juz */}
         <JuzSelector value={juz} onValueChange={setJuz} />
 
-        {/* Drill Level */}
+        {/* LEVEL DRILL */}
         <div>
           <Label>Level Drill</Label>
           <Select
             value={selectedDrill?.drillNumber?.toString() ?? ""}
-            onValueChange={v =>
-              setSelectedDrill(
-                drills.find(d => d.drillNumber === Number(v)) ?? null
-              )
-            }
+            onValueChange={(value) => {
+              const drill = drills.find(
+                (d) => d.drillNumber === Number(value)
+              );
+              setSelectedDrill(drill ?? null);
+            }}
             disabled={!juz}
           >
             <SelectTrigger>
               <SelectValue placeholder="Pilih Level Drill" />
             </SelectTrigger>
             <SelectContent>
-              {drills.map(d => (
-                <SelectItem key={d.drillNumber} value={String(d.drillNumber)}>
-                  Level {d.drillNumber} — {formatDrillDescription(d)}
+              {drills.map((drill) => (
+                <SelectItem
+                  key={drill.drillNumber}
+                  value={String(drill.drillNumber)}
+                >
+                  Level {drill.drillNumber} —{" "}
+                  {formatDrillDescription(drill)}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
 
-        {/* PAGE INPUT */}
-        {isPageBased && (
-          <div className="space-y-2">
-            <Label>Halaman Hafalan</Label>
-
-            {pages.map(p => (
-              <div key={p.id} className="flex gap-2">
-                <Input
-                  type="number"
-                  value={p.page}
-                  onChange={e =>
-                    setPages(m =>
-                      m.map(x =>
-                        x.id === p.id
-                          ? { ...x, page: Number(e.target.value) }
-                          : x
-                      )
-                    )
-                  }
-                />
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={() =>
-                    setPages(m => m.filter(x => x.id !== p.id))
-                  }
-                >
-                  <X />
-                </Button>
+        {/* INFO DRILL */}
+        {isPageBased && selectedDrill && (
+          <Card className="border-dashed">
+            <CardContent className="p-4 flex gap-3">
+              <FileText className="w-5 h-5" />
+              <div>
+                <p className="font-medium">
+                  Halaman {selectedDrill.pageStart} –{" "}
+                  {selectedDrill.pageEnd}
+                </p>
               </div>
-            ))}
-
-            <Button size="sm" variant="outline" onClick={() =>
-              setPages(m => [...m, { id: crypto.randomUUID(), page: 1 }])
-            }>
-              <Plus className="w-4 h-4 mr-1" /> Tambah Halaman
-            </Button>
-          </div>
+            </CardContent>
+          </Card>
         )}
 
-        {/* SURAH INPUT */}
-        {!isPageBased && selectedDrill && (
-          <div className="space-y-2">
-            <Label>Surat & Ayat</Label>
-
-            {surahs.map(s => (
-              <div key={s.id} className="space-y-2 border p-2 rounded">
-                <Input
-                  placeholder="Nama surat"
-                  value={s.surahName}
-                  onChange={e =>
-                    setSurahs(m =>
-                      m.map(x =>
-                        x.id === s.id
-                          ? { ...x, surahName: e.target.value }
-                          : x
-                      )
-                    )
-                  }
-                />
-                <div className="flex gap-2">
-                  <Input
-                    type="number"
-                    placeholder="Ayat awal"
-                    onChange={e =>
-                      setSurahs(m =>
-                        m.map(x =>
-                          x.id === s.id
-                            ? { ...x, ayatStart: Number(e.target.value) }
-                            : x
-                        )
-                      )
-                    }
-                  />
-                  <Input
-                    type="number"
-                    placeholder="Ayat akhir"
-                    onChange={e =>
-                      setSurahs(m =>
-                        m.map(x =>
-                          x.id === s.id
-                            ? { ...x, ayatEnd: Number(e.target.value) }
-                            : x
-                        )
-                      )
-                    }
-                  />
-                </div>
+        {/* MANUAL INPUT PAGE */}
+        {isPageBased && selectedDrill && (
+          <Card className="border-dashed border-amber-500/50">
+            <CardHeader className="pb-2">
+              <div className="flex justify-between items-center">
+                <CardTitle className="text-sm">
+                  Input Manual Halaman
+                </CardTitle>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleAddManualDrill}
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  Tambah
+                </Button>
               </div>
-            ))}
+            </CardHeader>
 
-            <Button size="sm" variant="outline" onClick={() =>
-              setSurahs(m => [...m, { id: crypto.randomUUID(), surahName: "" }])
-            }>
-              <Plus className="w-4 h-4 mr-1" /> Tambah Surat
-            </Button>
-          </div>
+            <CardContent className="space-y-2">
+              {manualDrills.map((md) => (
+                <div
+                  key={md.id}
+                  className="flex items-center gap-2"
+                >
+                  <Input
+                    type="number"
+                    value={md.pageStart}
+                    min={selectedDrill.pageStart}
+                    max={selectedDrill.pageEnd}
+                    onChange={(e) =>
+                      handleManualDrillChange(
+                        md.id,
+                        Number(e.target.value)
+                      )
+                    }
+                  />
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() =>
+                      handleRemoveManualDrill(md.id)
+                    }
+                  >
+                    <X />
+                  </Button>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
         )}
 
         {/* PENILAIAN */}
@@ -308,7 +292,9 @@ const TambahDrill: FC<any> = ({
           <Input
             type="number"
             value={jumlahKesalahan}
-            onChange={e => setJumlahKesalahan(Number(e.target.value))}
+            onChange={(e) =>
+              setJumlahKesalahan(Number(e.target.value))
+            }
           />
 
           <Badge
@@ -324,7 +310,7 @@ const TambahDrill: FC<any> = ({
           <Textarea
             placeholder="Catatan tajwid"
             value={catatan}
-            onChange={e => setCatatan(e.target.value)}
+            onChange={(e) => setCatatan(e.target.value)}
           />
         </div>
       </div>
