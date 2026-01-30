@@ -139,7 +139,6 @@ const SetoranHafalan = () => {
     if (!drillJuz) return [];
     return getDrillsForJuz(Number(drillJuz));
   }, [drillJuz]);
-  const [drillLevelSelected, setDrillLevelSelected] = useState("");
   const [drillJumlahKesalahan, setDrillJumlahKesalahan] = useState("0");
   const [catatanTajwid, setCatatanTajwid] = useState("");
 
