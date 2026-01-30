@@ -28,7 +28,6 @@ import { JuzSelector } from "@/components/JuzSelector";
 
 import {
   getDrillsForJuz,
-  isPageBasedDrill,
   DrillDefinition,
 } from "@/lib/drill-data";
 
@@ -39,12 +38,12 @@ const BATAS_KESALAHAN = 5;
 
 /* ================= TYPES ================= */
 
-interface ManualPageDrill {
+interface ManualPage {
   id: string;
   page: number;
 }
 
-interface ManualSurahDrill {
+interface ManualSurah {
   id: string;
   surahName: string;
   ayatStart?: number;
@@ -58,27 +57,26 @@ const TambahDrill: FC<any> = ({
   filteredSantriForForm,
   CalendarComponent,
 }) => {
-  /* ========== BASIC FORM ========== */
-  const [halaqohFilter, setHalaqohFilter] = useState("");
+  /* ===== BASIC ===== */
+  const [halaqohId, setHalaqohId] = useState("");
   const [santriId, setSantriId] = useState("");
   const [tanggal, setTanggal] = useState<Date>();
   const [juz, setJuz] = useState("");
 
-  /* ========== DRILL ========== */
-  const [selectedDrill, setSelectedDrill] = useState("");
+  /* ===== DRILL (INI KUNCI) ===== */
+  const [selectedDrill, setSelectedDrill] =
+    useState<DrillDefinition | null>(null);
 
   const drills = useMemo<DrillDefinition[]>(() => {
     if (!juz) return [];
     return getDrillsForJuz(Number(juz));
   }, [juz]);
 
-  const pageBased = juz ? isPageBasedDrill(Number(juz)) : false;
+  /* ===== MANUAL INPUT ===== */
+  const [pages, setPages] = useState<ManualPage[]>([]);
+  const [surahs, setSurahs] = useState<ManualSurah[]>([]);
 
-  /* ========== MANUAL INPUT ========== */
-  const [manualPages, setManualPages] = useState<ManualPageDrill[]>([]);
-  const [manualSurahs, setManualSurahs] = useState<ManualSurahDrill[]>([]);
-
-  /* ========== PENILAIAN ========== */
+  /* ===== PENILAIAN ===== */
   const [jumlahKesalahan, setJumlahKesalahan] = useState(0);
   const nilaiKelancaran = Math.max(
     0,
@@ -86,35 +84,39 @@ const TambahDrill: FC<any> = ({
   );
   const [catatan, setCatatan] = useState("");
 
-  /* ========== EFFECT RESET ========== */
+  /* ===== RESET SAAT DRILL GANTI ===== */
   useEffect(() => {
-    setManualPages([]);
-    setManualSurahs([]);
+    setPages([]);
+    setSurahs([]);
   }, [selectedDrill]);
 
-  /* ========== HELPERS ========== */
+  /* ===== DRILL TYPE ===== */
+  const isPageBased = useMemo(() => {
+    if (!selectedDrill) return false;
+    return (
+      "pageCount" in selectedDrill ||
+      ("startPage" in selectedDrill && "endPage" in selectedDrill)
+    );
+  }, [selectedDrill]);
+
+  /* ===== HELPERS ===== */
+  const formatDrillDescription = (drill: DrillDefinition) => {
+    if ("fullSurah" in drill && drill.fullSurah) return "1 Surah penuh";
+    if ("pageCount" in drill) return `${drill.pageCount} halaman`;
+    if ("startPage" in drill && "endPage" in drill)
+      return `Hal ${drill.startPage}–${drill.endPage}`;
+    return "Custom";
+  };
 
   const addPage = () =>
-    setManualPages(p => [...p, { id: crypto.randomUUID(), page: 1 }]);
+    setPages(p => [...p, { id: crypto.randomUUID(), page: 1 }]);
 
   const addSurah = () =>
-    setManualSurahs(s => [
+    setSurahs(s => [
       ...s,
       { id: crypto.randomUUID(), surahName: "" },
     ]);
 
-  const formatDrillDescription = (drill: DrillDefinition) => {
-    if ("fullSurah" in drill) return "1 Surah penuh";
-
-    if ("pageCount" in drill)
-      return `${drill.pageCount} halaman`;
-
-    if ("startPage" in drill && "endPage" in drill)
-      return `Hal ${drill.startPage}–${drill.endPage}`;
-
-    return "Custom";
-  };
-  
   /* ================= RENDER ================= */
 
   return (
@@ -127,7 +129,7 @@ const TambahDrill: FC<any> = ({
         {/* Halaqoh */}
         <div>
           <Label>Halaqoh</Label>
-          <Select value={halaqohFilter} onValueChange={setHalaqohFilter}>
+          <Select value={halaqohId} onValueChange={setHalaqohId}>
             <SelectTrigger>
               <SelectValue placeholder="Pilih halaqoh" />
             </SelectTrigger>
@@ -178,14 +180,20 @@ const TambahDrill: FC<any> = ({
           </Popover>
         </div>
 
+        {/* Juz */}
         <JuzSelector value={juz} onValueChange={setJuz} />
 
-        {/* Level Drill */}
+        {/* LEVEL DRILL (SUMBER TUNGGAL) */}
         <div>
           <Label>Level Drill</Label>
           <Select
-            value={selectedDrill}
-            onValueChange={setSelectedDrill}
+            value={selectedDrill?.drillNumber?.toString() ?? ""}
+            onValueChange={value => {
+              const drill = drills.find(
+                d => d.drillNumber === Number(value)
+              );
+              setSelectedDrill(drill ?? null);
+            }}
             disabled={!juz}
           >
             <SelectTrigger>
@@ -205,96 +213,98 @@ const TambahDrill: FC<any> = ({
           </Select>
         </div>
 
-        {/* MANUAL INPUT */}
-        {pageBased ? (
-          <div className="space-y-2">
-            <Label>Halaman Hafalan</Label>
+        {/* INPUT DRILL */}
+        {selectedDrill && (
+          isPageBased ? (
+            <div className="space-y-2">
+              <Label>Halaman Hafalan</Label>
 
-            {manualPages.map(p => (
-              <div key={p.id} className="flex gap-2">
-                <Input
-                  type="number"
-                  value={p.page}
-                  onChange={e =>
-                    setManualPages(m =>
-                      m.map(x =>
-                        x.id === p.id
-                          ? { ...x, page: Number(e.target.value) }
-                          : x
-                      )
-                    )
-                  }
-                />
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={() =>
-                    setManualPages(m => m.filter(x => x.id !== p.id))
-                  }
-                >
-                  <X />
-                </Button>
-              </div>
-            ))}
-
-            <Button size="sm" variant="outline" onClick={addPage}>
-              <Plus className="w-4 h-4 mr-1" /> Tambah Halaman
-            </Button>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            <Label>Surat & Ayat</Label>
-
-            {manualSurahs.map(s => (
-              <div key={s.id} className="space-y-2 border p-2 rounded">
-                <Input
-                  placeholder="Nama surat"
-                  value={s.surahName}
-                  onChange={e =>
-                    setManualSurahs(m =>
-                      m.map(x =>
-                        x.id === s.id
-                          ? { ...x, surahName: e.target.value }
-                          : x
-                      )
-                    )
-                  }
-                />
-                <div className="flex gap-2">
+              {pages.map(p => (
+                <div key={p.id} className="flex gap-2">
                   <Input
                     type="number"
-                    placeholder="Ayat awal"
+                    value={p.page}
                     onChange={e =>
-                      setManualSurahs(m =>
+                      setPages(m =>
                         m.map(x =>
-                          x.id === s.id
-                            ? { ...x, ayatStart: Number(e.target.value) }
+                          x.id === p.id
+                            ? { ...x, page: Number(e.target.value) }
                             : x
                         )
                       )
                     }
                   />
-                  <Input
-                    type="number"
-                    placeholder="Ayat akhir"
-                    onChange={e =>
-                      setManualSurahs(m =>
-                        m.map(x =>
-                          x.id === s.id
-                            ? { ...x, ayatEnd: Number(e.target.value) }
-                            : x
-                        )
-                      )
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() =>
+                      setPages(m => m.filter(x => x.id !== p.id))
                     }
-                  />
+                  >
+                    <X />
+                  </Button>
                 </div>
-              </div>
-            ))}
+              ))}
 
-            <Button size="sm" variant="outline" onClick={addSurah}>
-              <Plus className="w-4 h-4 mr-1" /> Tambah Surat
-            </Button>
-          </div>
+              <Button size="sm" variant="outline" onClick={addPage}>
+                <Plus className="w-4 h-4 mr-1" /> Tambah Halaman
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <Label>Surat & Ayat</Label>
+
+              {surahs.map(s => (
+                <div key={s.id} className="space-y-2 border p-2 rounded">
+                  <Input
+                    placeholder="Nama surat"
+                    value={s.surahName}
+                    onChange={e =>
+                      setSurahs(m =>
+                        m.map(x =>
+                          x.id === s.id
+                            ? { ...x, surahName: e.target.value }
+                            : x
+                        )
+                      )
+                    }
+                  />
+                  <div className="flex gap-2">
+                    <Input
+                      type="number"
+                      placeholder="Ayat awal"
+                      onChange={e =>
+                        setSurahs(m =>
+                          m.map(x =>
+                            x.id === s.id
+                              ? { ...x, ayatStart: Number(e.target.value) }
+                              : x
+                          )
+                        )
+                      }
+                    />
+                    <Input
+                      type="number"
+                      placeholder="Ayat akhir"
+                      onChange={e =>
+                        setSurahs(m =>
+                          m.map(x =>
+                            x.id === s.id
+                              ? { ...x, ayatEnd: Number(e.target.value) }
+                              : x
+                          )
+                        )
+                      }
+                    />
+                  </div>
+                </div>
+              ))}
+
+              <Button size="sm" variant="outline" onClick={addSurah}>
+                <Plus className="w-4 h-4 mr-1" /> Tambah Surat
+              </Button>
+            </div>
+          )
         )}
 
         {/* PENILAIAN */}
