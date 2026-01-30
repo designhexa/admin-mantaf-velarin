@@ -118,7 +118,7 @@ const SetoranHafalan = () => {
   const [drillSelectedSantri, setDrillSelectedSantri] = useState("");
   const [tanggalDrill, setTanggalDrill] = useState<Date>();
   const [drillJuz, setDrillJuz] = useState("");
-  const drills = useMemo<DrillDefinition[]>(() => {
+  const drills: DrillDefinition[] = useMemo(() => {
     if (!drillJuz) return [];
     return getDrillsForJuz(Number(drillJuz));
   }, [drillJuz]);
