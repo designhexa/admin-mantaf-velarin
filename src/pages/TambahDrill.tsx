@@ -73,6 +73,8 @@ const TambahDrill: FC<any> = ({
   }, [juz]);
 
 
+  /* ===== SURAH STATE (for surah-based drills) ===== */
+  const [surahs, setSurahs] = useState<{ id: string; surahName: string }[]>([]);
 
   /* ===== MANUAL INPUT (PAGE) ===== */
   const [pages, setPages] = useState<ManualPage[]>([]);

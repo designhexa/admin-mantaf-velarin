@@ -40,6 +40,7 @@ import {
   getDrillsForJuz,
   DrillDefinition,
   isPageBasedDrill,
+  formatDrillDescription,
 } from "@/lib/drill-data";
 
 // Jenis setoran
@@ -206,7 +207,7 @@ const SetoranHafalan = () => {
     setAyatSampai("7");
     setJumlahKesalahan("0");
     setCatatan("");
-    setDrillLevel("");
+    setDrillLevelSelected("");
   };
 
   const resetDrillForm = () => {
@@ -456,13 +457,64 @@ const SetoranHafalan = () => {
                               disabled={!unlocked}
                             >
                               {unlocked ? <Unlock className="inline w-3 h-3 mr-1" /> : <Lock className="inline w-3 h-3 mr-1" />}
-                              Level {drill.drillNumber} — {drill.description}
+                              Level {drill.drillNumber} — {formatDrillDescription(drill)}
                             </SelectItem>
                           );
                         })}
                       </SelectContent>
                     </Select>
                   </div>
+
+                  {/* Info Drill yang dipilih */}
+                  {drillLevelSelected && drillJuz && (() => {
+                    const selectedDrill = drills.find(d => d.drillNumber === Number(drillLevelSelected));
+                    if (!selectedDrill) return null;
+
+                    if (selectedDrill.type === 'page') {
+                      return (
+                        <Card className="border-dashed border-primary/50">
+                          <CardContent className="p-4">
+                            <div className="flex items-center gap-3">
+                              <BookOpen className="w-5 h-5 text-primary" />
+                              <div>
+                                <p className="font-medium">Target Drill: Halaman</p>
+                                <p className="text-sm text-muted-foreground">
+                                  Halaman {selectedDrill.pageStart} – {selectedDrill.pageEnd}
+                                </p>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    }
+
+                    if (selectedDrill.type === 'surah' && selectedDrill.surahRanges) {
+                      return (
+                        <Card className="border-dashed border-primary/50">
+                          <CardContent className="p-4">
+                            <div className="flex items-start gap-3">
+                              <Target className="w-5 h-5 text-primary mt-0.5" />
+                              <div className="space-y-1">
+                                <p className="font-medium">Target Drill: Surat</p>
+                                <div className="text-sm text-muted-foreground space-y-0.5">
+                                  {selectedDrill.surahRanges.map((s, i) => (
+                                    <p key={i}>
+                                      • {s.surahName}
+                                      {s.fullSurah
+                                        ? " (1 surat penuh)"
+                                        : ` ayat ${s.ayatStart}–${s.ayatEnd}`}
+                                    </p>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    }
+
+                    return null;
+                  })()}
 
                   {/* Penilaian */}
                   <div className="pt-4 border-t space-y-4">
