@@ -149,7 +149,7 @@ export const TasmiCandidateCard = ({
                     <th className="py-3 px-4 text-center font-semibold border-r border-green-500/50">Nama Lengkap</th>
                     <th className="py-3 px-4 text-center font-semibold border-r border-green-500/50 w-20">Kelas</th>
                     <th className="py-3 px-4 text-center font-semibold border-r border-green-500/50 w-28">Jumlah Hafalan</th>
-                    <th className="py-3 px-4 text-center font-semibold w-40">Juz yang Diujikan</th>
+                    <th className="py-3 px-4 text-center font-semibold w-44">Juz yang Diujikan</th>
                   </tr>
                 </thead>
                 <tbody>
