@@ -206,8 +206,8 @@ export default function Dashboard() {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={targetPerKelasData}>
                     <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                    <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-                    <YAxis tick={{ fontSize: 12 }} />
+                    <XAxis dataKey="name" className="text-xs" />
+                    <YAxis className="text-xs" />
                     <Tooltip 
                       contentStyle={{ 
                         backgroundColor: 'hsl(var(--card))', 
@@ -215,8 +215,8 @@ export default function Dashboard() {
                         borderRadius: '8px'
                       }} 
                     />
-                    <Bar dataKey="memenuhi" name="Memenuhi Target" style={{ fill: "hsl(var(--chart-2))" }} radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="belum" name="Belum Memenuhi" style={{ fill: "hsl(var(--chart-1))" }} radius={[4, 4, 0, 0]}
+                    <Bar dataKey="memenuhi" name="Memenuhi Target" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="belum" name="Belum Memenuhi" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
