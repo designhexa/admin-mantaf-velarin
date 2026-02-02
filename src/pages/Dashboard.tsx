@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { 
   Users, 
-  BookMarked, 
+  BookOpenCheck, 
   BookOpen, 
   TrendingUp, 
   Target, 
@@ -151,7 +151,7 @@ export default function Dashboard() {
     {
       title: "Calon Tasmi'",
       value: targetStats.eligibleForTasmi,
-      icon: Award,
+      icon: BookOpenCheck,
       gradient: "from-chart-4 to-chart-4/80",
     },
   ];
