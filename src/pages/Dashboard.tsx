@@ -215,8 +215,8 @@ export default function Dashboard() {
                         borderRadius: '8px'
                       }} 
                     />
-                    <Bar dataKey="memenuhi" name="Memenuhi Target" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="belum" name="Belum Memenuhi" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="memenuhi" name="Memenuhi Target" style={{ fill: "hsl(var(--chart-2))" }} radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="belum" name="Belum Memenuhi" style={{ fill: "hsl(var(--chart-1))" }} radius={[4, 4, 0, 0]}
                   </BarChart>
                 </ResponsiveContainer>
               </div>
