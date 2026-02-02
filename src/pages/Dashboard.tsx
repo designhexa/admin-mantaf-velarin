@@ -133,13 +133,13 @@ export default function Dashboard() {
       title: "Total Santri",
       value: stats.totalSantri || mockSantriProgress.length,
       icon: Users,
-      gradient: "from-primary to-primary/80",
+      gradient: "from-amber-500 to-amber-800",
     },
     {
       title: "Memenuhi Target",
       value: targetStats.meetsTarget,
       icon: CheckCircle,
-      gradient: "from-green-500 to-green-600",
+      gradient: "from-primary to-primary/80",
       subtitle: `${targetStats.meetsTargetPercentage}%`
     },
     {
@@ -152,7 +152,7 @@ export default function Dashboard() {
       title: "Calon Tasmi'",
       value: targetStats.eligibleForTasmi,
       icon: BookOpenCheck,
-      gradient: "from-amber-500 to-lime-500",
+      gradient: "from-green-500 to-lime-500",
     },
   ];
 
