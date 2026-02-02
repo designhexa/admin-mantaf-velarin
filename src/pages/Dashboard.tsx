@@ -139,7 +139,7 @@ export default function Dashboard() {
       title: "Memenuhi Target",
       value: targetStats.meetsTarget,
       icon: CheckCircle,
-      gradient: "from-lime to-lime/80",
+      gradient: "from-lime-500 to-lime-600",
       subtitle: `${targetStats.meetsTargetPercentage}%`
     },
     {
@@ -152,7 +152,7 @@ export default function Dashboard() {
       title: "Calon Tasmi'",
       value: targetStats.eligibleForTasmi,
       icon: BookOpenCheck,
-      gradient: "from-amber to-amber/80",
+      gradient: "from-ambe-500r to-amber-600",
     },
   ];
 
