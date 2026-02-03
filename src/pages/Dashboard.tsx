@@ -168,7 +168,7 @@ export default function Dashboard() {
       title: "Memenuhi Target",
       value: targetStats.meetsTarget,
       icon: CheckCircle,
-      gradient: "from-green-500 to-green-300",
+      gradient: "from-green-500 to-green-500",
       subtitle: `${targetStats.meetsTargetPercentage}%`
     },
     {
