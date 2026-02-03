@@ -284,7 +284,7 @@ const TambahSetoran = () => {
             className="text-xs"
             disabled={!isFormEnabled}
           >
-            Rumah
+            Tilawah di Rumah
           </TabsTrigger>
         </TabsList>
 
