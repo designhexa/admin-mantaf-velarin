@@ -354,10 +354,6 @@ const TambahSetoran = () => {
 
               {/* Penilaian */}
               <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm">Penilaian</CardTitle>
-                  <CardDescription>Masukkan jumlah kesalahan untuk menghitung nilai</CardDescription>
-                </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
                     <Label>Catatan</Label>
