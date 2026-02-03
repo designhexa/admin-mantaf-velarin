@@ -53,9 +53,9 @@ const TambahSetoran = () => {
   const [halaqohFilter, setHalaqohFilter] = useState("");
   const [selectedSantri, setSelectedSantri] = useState("");
   const [tanggalSetoran, setTanggalSetoran] = useState<Date>();
-  const [resetMode, setResetMode] = useState(false);
 
   // Form state
+  const [resetMode, setResetMode] = useState(false);
   const [activeTab, setActiveTab] = useState("setoran_baru");
   const [juz, setJuz] = useState("");
   const [surah, setSurah] = useState("");
