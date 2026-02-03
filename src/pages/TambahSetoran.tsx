@@ -231,6 +231,13 @@ const TambahSetoran = () => {
       {/* ================= Kalender (Muncul setelah pilih santri) ================= */}
       {selectedSantri && (
         <>
+          <SetoranCalendar
+            santriId={selectedSantri}
+            setoranRecords={resetMode ? [] : mockSetoranRecords}
+            onSelectDate={handleDateSelect}
+            selectedDate={tanggalSetoran}
+          />
+
           {/* Switch Reset Kalender */}
           <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
             <div className="flex items-center gap-2">
@@ -245,13 +252,6 @@ const TambahSetoran = () => {
               onCheckedChange={handleResetCalendar}
             />
           </div>
-
-          <SetoranCalendar
-            santriId={selectedSantri}
-            setoranRecords={resetMode ? [] : mockSetoranRecords}
-            onSelectDate={handleDateSelect}
-            selectedDate={tanggalSetoran}
-          />
         </>
       )}
 
