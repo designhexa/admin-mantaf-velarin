@@ -157,7 +157,7 @@ const TambahSetoran = () => {
       case "setoran_baru": return "Setoran Baru";
       case "murojaah": return "Murojaah";
       case "tilawah": return "Tilawah";
-      case "tilawah_rumah": return "Rumah";
+      case "tilawah_rumah": return "Tilawah di Rumah";
       default: return tab;
     }
   };
@@ -284,7 +284,7 @@ const TambahSetoran = () => {
             className="text-xs"
             disabled={!isFormEnabled}
           >
-            Tilawah di Rumah
+            Rumah
           </TabsTrigger>
         </TabsList>
 
