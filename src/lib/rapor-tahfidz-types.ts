@@ -110,9 +110,9 @@ export const BULAN_SEMESTER: Record<string, string[]> = {
 // Mock data untuk demo
 export const mockRaporData: RaporTahfidz = {
   identitas: {
-    nama: "Nazhmina Azyan Malikha Awaluddin",
-    nis: "39",
-    nisn: "136799905",
+    nama: "Fulan Fulanah",
+    nis: "S001",
+    nisn: "1020267157",
     kelas: "7 (Tujuh)",
     semester: "Ganjil",
     tahunAjaran: "2025/2026",
