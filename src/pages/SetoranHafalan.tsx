@@ -459,7 +459,7 @@ const SetoranHafalan = () => {
             {/* Tambah Drill Dialog */}
             <Dialog open={isDrillDialogOpen} onOpenChange={setIsDrillDialogOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="w-full md:w-auto">
+                <Button size="sm" className="w-full md:w-auto">
                   <Target className="w-4 h-4 md:mr-2" />
                   <span className="hidden sm:inline">Drill</span>
                 </Button>
