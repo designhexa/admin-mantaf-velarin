@@ -18,7 +18,7 @@ export default function TilawahAbsensi() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Absensi & Setoran Tilawah</h1>
+            <h1 className="text-2xl font-bold text-foreground">Setoran Tilawah</h1>
             <p className="text-muted-foreground text-sm mt-1">Kelola absensi dan setoran tilawah santri</p>
           </div>
           <Button className="bg-primary hover:bg-primary/90">
@@ -29,7 +29,7 @@ export default function TilawahAbsensi() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Daftar Absensi & Setoran</CardTitle>
+            <CardTitle>Daftar Setoran</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
