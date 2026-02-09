@@ -517,6 +517,7 @@ const UjianTahfidz = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>No</TableHead>
                     <TableHead>Santri</TableHead>
                     <TableHead>Tanggal</TableHead>
                     <TableHead>Materi</TableHead>
@@ -534,6 +535,7 @@ const UjianTahfidz = () => {
                   ) : (
                     ujianHistory.map((item) => (
                       <TableRow key={item.id}>
+                        <TableCell>{index + 1}</TableCell>
                         <TableCell className="font-medium">{item.santri}</TableCell>
                         <TableCell>{item.tanggal}</TableCell>
                         <TableCell>{item.materi}</TableCell>
