@@ -60,7 +60,7 @@ const getPredikat = (nilai: number): { label: string; color: string; passed: boo
   if (nilai >= 90) return { label: "Mumtaz", color: "bg-green-500", passed: true };
   if (nilai >= 76) return { label: "Jayyid Jiddan", color: "bg-blue-500", passed: true };
   if (nilai >= 70) return { label: "Jayyid", color: "bg-amber-500", passed: true };
-  return { label: "Tidak Lulus", color: "bg-red-500", passed: false };
+  return { label: "Mengulang", color: "bg-red-500", passed: false };
 };
 
 interface Halaqoh {
@@ -204,7 +204,7 @@ const UjianTasmi = () => {
           <CardHeader className="pb-2 cursor-pointer" onClick={() => setExpandedRules(!expandedRules)}>
             <div className="flex items-center justify-between"><CardTitle className="text-base flex items-center gap-2"><AlertCircle className="w-4 h-4 text-amber-500" />Ketentuan Ujian Tasmi'</CardTitle>{expandedRules ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}</div>
           </CardHeader>
-          {expandedRules && (<CardContent className="text-sm space-y-4"><div><h4 className="font-semibold mb-2">📚 Urutan Juz:</h4><p className="text-muted-foreground">Juz 30 → 29 → 28 → 27 → 26, lalu Juz 1 → 2 → 3 dst...</p></div><div><h4 className="font-semibold mb-2">🏆 Kriteria:</h4><div className="grid grid-cols-2 sm:grid-cols-5 gap-2"><Badge className="bg-emerald-500 text-white justify-center">96-100: Mumtaz Murtafi'</Badge><Badge className="bg-green-500 text-white justify-center">90-95: Mumtaz</Badge><Badge className="bg-blue-500 text-white justify-center">76-89: Jayyid Jiddan</Badge><Badge className="bg-amber-500 text-white justify-center">70-75: Jayyid</Badge><Badge className="bg-red-500 text-white justify-center">&lt;70: Tidak Lulus</Badge></div></div></CardContent>)}
+          {expandedRules && (<CardContent className="text-sm space-y-4"><div><h4 className="font-semibold mb-2">📚 Urutan Juz:</h4><p className="text-muted-foreground">Juz 30 → 29 → 28 → 27 → 26, lalu Juz 1 → 2 → 3 dst...</p></div><div><h4 className="font-semibold mb-2">🏆 Kriteria:</h4><div className="grid grid-cols-2 sm:grid-cols-5 gap-2"><Badge className="bg-emerald-500 text-white justify-center">96-100: Mumtaz Murtafi'</Badge><Badge className="bg-green-500 text-white justify-center">90-95: Mumtaz</Badge><Badge className="bg-blue-500 text-white justify-center">76-89: Jayyid Jiddan</Badge><Badge className="bg-amber-500 text-white justify-center">70-75: Jayyid</Badge><Badge className="bg-red-500 text-white justify-center">&lt;70: Mengulang</Badge></div></div></CardContent>)}
         </Card>
 
         {/* Tabs untuk Calon Tasmi dan Riwayat */}

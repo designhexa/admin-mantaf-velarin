@@ -232,7 +232,7 @@ const SetoranHafalan = () => {
 
     const isDrill = activeTab === "drill";
     const batasLulus = isDrill ? BATAS_LULUS_DRILL : BATAS_LANCAR;
-    const status = nilaiKelancaran >= batasLulus ? (isDrill ? "Lulus" : "Lancar") : (isDrill ? "Tidak Lulus" : "Kurang");
+    const status = nilaiKelancaran >= batasLulus ? (isDrill ? "Lulus" : "Lancar") : (isDrill ? "Mengulang" : "Kurang");
 
     console.log({
       jenis: activeTab,

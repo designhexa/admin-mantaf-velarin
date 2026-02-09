@@ -99,7 +99,7 @@ const UjianTahfidz = () => {
 
   const ujianHistory = [
     { id: "1", santri: "Ahmad Fauzi", tanggal: "2024-01-15", materi: "Juz 1-2", nilaiTotal: 85, status: "Lulus" },
-    { id: "2", santri: "Muhammad Rizki", tanggal: "2024-01-14", materi: "Juz 1-2", nilaiTotal: 65, status: "Tidak Lulus" },
+    { id: "2", santri: "Muhammad Rizki", tanggal: "2024-01-14", materi: "Juz 1-2", nilaiTotal: 65, status: "Mengulang" },
   ];
 
   const filteredSantriList = santriList.filter((s) => {
@@ -163,7 +163,7 @@ const UjianTahfidz = () => {
       generatedQuestions,
       soalData,
       totalNilai: getTotalNilai(),
-      status: isLulus() ? "Lulus" : "Tidak Lulus",
+      status: isLulus() ? "Lulus" : "Mengulang",
       catatan,
     });
     
@@ -477,7 +477,7 @@ const UjianTahfidz = () => {
                           <p className="text-3xl font-bold">{getTotalNilai()}/100</p>
                         </div>
                         <Badge className={`text-lg px-4 py-2 ${isLulus() ? "bg-green-600" : "bg-red-600"}`}>
-                          {isLulus() ? "LULUS" : "TIDAK LULUS"}
+                          {isLulus() ? "LULUS" : "MENGULANG"}
                         </Badge>
                       </div>
                     </CardContent>

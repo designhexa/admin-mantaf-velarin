@@ -411,7 +411,7 @@ export default function TilawahUjian() {
                          variant={hitungTotalNilai() >= getNilaiMinimum() ? "default" : "destructive"}
                          className="text-lg px-4 py-2"
                        >
-                         {hitungTotalNilai() >= getNilaiMinimum() ? "LULUS" : "TIDAK LULUS"}
+                         {hitungTotalNilai() >= getNilaiMinimum() ? "LULUS" : "MENGULANG"}
                        </Badge>
                      </div>
                      <p className="text-xs text-muted-foreground mt-2">
@@ -501,7 +501,7 @@ export default function TilawahUjian() {
                        <TableCell className="font-bold">{ujian.nilaiTotal}</TableCell>
                        <TableCell>
                          <Badge variant={ujian.status === "lulus" ? "default" : "destructive"}>
-                           {ujian.status === "lulus" ? "Lulus" : "Tidak Lulus"}
+                           {ujian.status === "lulus" ? "Lulus" : "Mengulang"}
                          </Badge>
                        </TableCell>
                      </TableRow>
