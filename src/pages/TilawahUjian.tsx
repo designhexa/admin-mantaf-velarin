@@ -150,7 +150,7 @@ export default function TilawahUjian() {
    };
  
    const kriteriaPenilaian = jilidDari
-    ? getAspekPenilaianByJilid(parseInt(jilidDari))
+    ? getKriteriaByJilid(parseInt(jilidDari))
     : ["tartil", "fashohah", "tajwid_dasar", "ghorib"];
 
   return (
