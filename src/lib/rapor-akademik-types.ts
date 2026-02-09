@@ -88,7 +88,7 @@ export const mockSantriAkademik = [
     id: "1",
     nis: "261",
     nisn: "0113806416",
-    nama: "QURRATA 'AYUN",
+    nama: "Qurrata 'Ayun",
     kelas: "8 (Delapan)",
     statusNilai: "Lengkap",
     statusRapor: "Belum Generate"
@@ -97,7 +97,7 @@ export const mockSantriAkademik = [
     id: "2",
     nis: "024",
     nisn: "2137489265",
-    nama: "AZZAHRA ZAINAB",
+    nama: "Azzahra Zainab",
     kelas: "8 (Delapan)",
     statusNilai: "Lengkap",
     statusRapor: "Sudah Generate"
@@ -115,7 +115,7 @@ export const mockSantriAkademik = [
     id: "4",
     nis: "001",
     nisn: "2115038077",
-    nama: "DZAKI ASH SHIDDIQ",
+    nama: "Dzaki Ash Shiddiq",
     kelas: "8 (Delapan)",
     statusNilai: "Lengkap",
     statusRapor: "Sudah Generate"
@@ -134,7 +134,7 @@ export const mockSantriAkademik = [
 // Mock data rapor akademik lengkap
 export const mockRaporAkademik: RaporAkademik = {
   identitas: {
-    nama: "QURRATA 'AYUN",
+    nama: "Qurrata 'Ayun",
     noInduk: "261",
     nisn: "0113806416",
     kelas: "8 (Delapan)",
