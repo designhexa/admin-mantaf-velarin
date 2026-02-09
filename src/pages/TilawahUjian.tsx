@@ -477,44 +477,70 @@ export default function TilawahUjian() {
               </Select>
             </div>
 
-            <Table>
-              <TableHeader>
+            <Table className="table-fixed w-full">
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-12 text-center">No</TableHead>
+                <TableHead>Nama Santri</TableHead>
+                <TableHead className="w-20">Kelas</TableHead>
+                <TableHead className="w-24">Jilid Dari</TableHead>
+                <TableHead className="w-24">Naik ke</TableHead>
+                <TableHead className="w-24 text-center">Nilai Total</TableHead>
+                <TableHead className="w-28 text-center">Status</TableHead>
+              </TableRow>
+            </TableHeader>
+
+            <TableBody>
+              {mockUjianData.length > 0 ? (
+                mockUjianData.map((ujian, index) => (
+                  <TableRow key={ujian.id}>
+                    <TableCell className="text-center">{index + 1}</TableCell>
+
+                    <TableCell className="font-medium">
+                      {ujian.nama}
+                    </TableCell>
+
+                    <TableCell>{ujian.kelas}</TableCell>
+
+                    <TableCell>Jilid {ujian.jilidDari}</TableCell>
+
+                    <TableCell>
+                      {ujian.jilidTujuan <= 6
+                        ? `Jilid ${ujian.jilidTujuan}`
+                        : "Al-Qur'an"}
+                    </TableCell>
+
+                    <TableCell className="font-bold text-center">
+                      {ujian.nilaiTotal}
+                    </TableCell>
+
+                    <TableCell>
+                      <div className="flex justify-center">
+                        <Badge
+                          className={
+                            ujian.status === "Lulus"
+                              ? "bg-green-600 text-white"
+                              : "bg-red-600 text-white"
+                          }
+                        >
+                          {ujian.status}
+                        </Badge>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
                 <TableRow>
-                  <TableHead>No</TableHead>
-                  <TableHead>Nama Santri</TableHead>
-                  <TableHead>Kelas</TableHead>
-                   <TableHead>Jilid Dari</TableHead>
-                   <TableHead>Naik ke</TableHead>
-                   <TableHead>Nilai Total</TableHead>
-                   <TableHead>Status</TableHead>
+                  <TableCell
+                    colSpan={7}
+                    className="text-center text-muted-foreground py-8"
+                  >
+                    Belum ada data ujian tilawah
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                 {mockUjianData.length > 0 ? (
-                   mockUjianData.map((ujian, index) => (
-                     <TableRow key={ujian.id}>
-                       <TableCell>{index + 1}</TableCell>
-                       <TableCell className="font-medium">{ujian.nama}</TableCell>
-                       <TableCell>{ujian.kelas}</TableCell>
-                       <TableCell>Jilid {ujian.jilidDari}</TableCell>
-                       <TableCell>{ujian.jilidTujuan <= 6 ? `Jilid ${ujian.jilidTujuan}` : "Al-Qur'an"}</TableCell>
-                       <TableCell className="font-bold text-center">{ujian.nilaiTotal}</TableCell>
-                       <TableCell className="text-center">
-                         <Badge className={item.status === "Lulus" ? "bg-green-600" : "bg-red-600"}>
-                           {item.status}
-                         </Badge>
-                       </TableCell>
-                    </TableRow>
-                   ))
-                 ) : (
-                   <TableRow>
-                     <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
-                       Belum ada data ujian tilawah
-                     </TableCell>
-                   </TableRow>
-                 )}
-              </TableBody>
-            </Table>
+              )}
+            </TableBody>
+          </Table>
           </CardContent>
         </Card>
       </div>
