@@ -478,84 +478,72 @@ export default function TilawahUjian() {
             </div>
 
             <Table className="table-fixed w-full">
-            <Table>
-            <TableHeader>
-              <TableRow>
-                {/* No → kecil & center */}
-                <TableHead className="w-12 text-center">No</TableHead>
-
-                <TableHead>Nama Santri</TableHead>
-                <TableHead>Kelas</TableHead>
-                <TableHead>Jilid Dari</TableHead>
-                <TableHead>Naik ke</TableHead>
-
-                {/* Nilai center */}
-                <TableHead className="text-center w-24">Nilai Total</TableHead>
-
-                {/* Status center */}
-                <TableHead className="text-center w-28">Status</TableHead>
-              </TableRow>
-            </TableHeader>
-
-            <TableBody>
-              {mockUjianData.length === 0 ? (
+              <TableHeader>
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
-                    Belum ada data ujian tilawah
-                  </TableCell>
+                  <TableHead className="w-12 text-center">No</TableHead>
+                  <TableHead>Nama Santri</TableHead>
+                  <TableHead>Kelas</TableHead>
+                  <TableHead>Jilid Dari</TableHead>
+                  <TableHead>Naik ke</TableHead>
+                  <TableHead className="text-center w-24">Nilai Total</TableHead>
+                  <TableHead className="text-center w-28">Status</TableHead>
                 </TableRow>
-              ) : (
-                mockUjianData.map((item, index) => {
-                  const isLulus = item.status?.toLowerCase() === "lulus";
+              </TableHeader>
 
-                  return (
-                    <TableRow key={item.id}>
-                      {/* No */}
-                      <TableCell className="text-center w-12">
-                        {index + 1}
-                      </TableCell>
+              <TableBody>
+                {mockUjianData.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                      Belum ada data ujian tilawah
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  mockUjianData.map((item, index) => {
+                    const isLulus = item.status?.toLowerCase() === "lulus";
 
-                      <TableCell className="font-medium">
-                        {item.nama}
-                      </TableCell>
+                    return (
+                      <TableRow key={item.id}>
+                        <TableCell className="text-center w-12">
+                          {index + 1}
+                        </TableCell>
 
-                      <TableCell>
-                        {item.kelas}
-                      </TableCell>
+                        <TableCell className="font-medium">
+                          {item.nama}
+                        </TableCell>
 
-                      <TableCell>
-                        Jilid {item.jilidDari}
-                      </TableCell>
+                        <TableCell>
+                          {item.kelas}
+                        </TableCell>
 
-                      <TableCell>
-                        {item.jilidTujuan <= 6
-                          ? `Jilid ${item.jilidTujuan}`
-                          : "Al-Qur'an"}
-                      </TableCell>
+                        <TableCell>
+                          Jilid {item.jilidDari}
+                        </TableCell>
 
-                      {/* Nilai */}
-                      <TableCell className="text-center font-semibold w-24">
-                        {item.nilaiTotal}
-                      </TableCell>
+                        <TableCell>
+                          {item.jilidTujuan <= 6 ? `Jilid ${item.jilidTujuan}` : "Al-Qur'an"}
+                        </TableCell>
 
-                      {/* Status */}
-                      <TableCell className="text-center w-28">
-                        <Badge
-                          className={
-                            isLulus
-                              ? "bg-green-600 text-white hover:bg-green-700"
-                              : "bg-red-600 text-white hover:bg-red-700"
-                          }
-                        >
-                          {item.status}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })
-              )}
-            </TableBody>
-          </Table>
+                        <TableCell className="text-center font-semibold w-24">
+                          {item.nilaiTotal}
+                        </TableCell>
+
+                        <TableCell className="text-center w-28">
+                          <Badge
+                            className={
+                              isLulus
+                                ? "bg-green-600 text-white"
+                                : "bg-red-600 text-white"
+                            }
+                          >
+                            {item.status}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
+                )}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
       </div>
