@@ -480,64 +480,47 @@ export default function TilawahUjian() {
             <Table className="table-fixed w-full">
             <TableHeader>
               <TableRow>
-                <TableHead className="w-12 text-center">No</TableHead>
+                <TableHead>No</TableHead>
                 <TableHead>Nama Santri</TableHead>
-                <TableHead className="w-20">Kelas</TableHead>
-                <TableHead className="w-24">Jilid Dari</TableHead>
-                <TableHead className="w-24">Naik ke</TableHead>
-                <TableHead className="w-24 text-center">Nilai Total</TableHead>
-                <TableHead className="w-28 text-center">Status</TableHead>
+                <TableHead>Kelas</TableHead>
+                <TableHead>Jilid Dari</TableHead>
+                <TableHead>Naik ke</TableHead>
+                <TableHead className="text-center">Nilai Total</TableHead>
+                <TableHead className="text-center">Status</TableHead>
               </TableRow>
             </TableHeader>
 
             <TableBody>
-              {mockUjianData.length > 0 ? (
-                mockUjianData.map((ujian, index) => (
-                  <TableRow key={ujian.id}>
-                    <TableCell className="text-center">{index + 1}</TableCell>
-
-                    <TableCell className="font-medium">
-                      {ujian.nama}
-                    </TableCell>
-
-                    <TableCell>{ujian.kelas}</TableCell>
-
-                    <TableCell>Jilid {ujian.jilidDari}</TableCell>
-
-                    <TableCell>
-                      {ujian.jilidTujuan <= 6
-                        ? `Jilid ${ujian.jilidTujuan}`
-                        : "Al-Qur'an"}
-                    </TableCell>
-
-                    <TableCell className="font-bold text-center">
-                      {ujian.nilaiTotal}
-                    </TableCell>
-
-                    <TableCell>
-                      <div className="flex justify-center">
-                        <Badge
-                          className={
-                            ujian.status === "Lulus"
-                              ? "bg-green-600 text-white"
-                              : "bg-red-600 text-white"
-                          }
-                        >
-                          {ujian.status}
-                        </Badge>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
+              {mockUjianData.length === 0 ? (
                 <TableRow>
-                  <TableCell
-                    colSpan={7}
-                    className="text-center text-muted-foreground py-8"
-                  >
+                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
                     Belum ada data ujian tilawah
                   </TableCell>
                 </TableRow>
+              ) : (
+                mockUjianData.map((item, index) => (
+                  <TableRow key={item.id}>
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell className="font-medium">{item.nama}</TableCell>
+                    <TableCell>{item.kelas}</TableCell>
+                    <TableCell>Jilid {item.jilidDari}</TableCell>
+                    <TableCell>
+                      {item.jilidTujuan <= 6 ? `Jilid ${item.jilidTujuan}` : "Al-Qur'an"}
+                    </TableCell>
+
+                    {/* Nilai center */}
+                    <TableCell className="text-center font-semibold">
+                      {item.nilaiTotal}
+                    </TableCell>
+
+                    {/* Status sama persis seperti contoh kamu */}
+                    <TableCell className="text-center">
+                      <Badge className={item.status === "Lulus" ? "bg-green-600" : "bg-red-600"}>
+                        {item.status}
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                ))
               )}
             </TableBody>
           </Table>
