@@ -515,41 +515,44 @@ const UjianTahfidz = () => {
           <CardContent>
             <div className="rounded-md border">
               <Table>
-                <TableHeader>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>No</TableHead>
+                  <TableHead>Santri</TableHead>
+                  <TableHead>Tanggal</TableHead>
+                  <TableHead>Materi</TableHead>
+                  <TableHead className="text-center">Nilai</TableHead>
+                  <TableHead className="text-center">Status</TableHead>
+                </TableRow>
+              </TableHeader>
+
+              <TableBody>
+                {ujianHistory.length === 0 ? (
                   <TableRow>
-                    <TableHead>No</TableHead>
-                    <TableHead>Santri</TableHead>
-                    <TableHead>Tanggal</TableHead>
-                    <TableHead>Materi</TableHead>
-                    <TableHead className="text-center">Nilai</TableHead>
-                    <TableHead className="text-center">Status</TableHead>
+                    <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                      Belum ada riwayat ujian
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {ujianHistory.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
-                        Belum ada riwayat ujian
+                ) : (
+                  ujianHistory.map((item, index) => (
+                    <TableRow key={item.id}>
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell className="font-medium">{item.santri}</TableCell>
+                      <TableCell>{item.tanggal}</TableCell>
+                      <TableCell>{item.materi}</TableCell>
+                      <TableCell className="text-center font-semibold">
+                        {item.nilaiTotal}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Badge className={item.status === "Lulus" ? "bg-green-600" : "bg-red-600"}>
+                          {item.status}
+                        </Badge>
                       </TableCell>
                     </TableRow>
-                  ) : (
-                    ujianHistory.map((item) => (
-                      <TableRow key={item.id}>
-                        <TableCell>{index + 1}</TableCell>
-                        <TableCell className="font-medium">{item.santri}</TableCell>
-                        <TableCell>{item.tanggal}</TableCell>
-                        <TableCell>{item.materi}</TableCell>
-                        <TableCell className="text-center font-semibold">{item.nilaiTotal}</TableCell>
-                        <TableCell className="text-center">
-                          <Badge className={item.status === "Lulus" ? "bg-green-600" : "bg-red-600"}>
-                            {item.status}
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
+                  ))
+                )}
+              </TableBody>
+            </Table>
             </div>
           </CardContent>
         </Card>
