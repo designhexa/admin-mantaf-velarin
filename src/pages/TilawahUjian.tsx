@@ -499,7 +499,7 @@ export default function TilawahUjian() {
                   </TableRow>
                 ) : (
                   mockUjianData.map((item, index) => {
-                    const isLulus = item.status?.toLowerCase() === "Lulus";
+                    const isLulus = item.status?.toLowerCase() === "lulus";
 
                     return (
                       <TableRow key={item.id}>
@@ -535,7 +535,7 @@ export default function TilawahUjian() {
                                 : "bg-red-600 text-white"
                             }
                           >
-                            {isLulus ? "Lulus" : "Mengulang"}
+                            {item.status}
                           </Badge>
                         </TableCell>
                       </TableRow>
