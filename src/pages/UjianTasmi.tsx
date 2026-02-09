@@ -246,7 +246,7 @@ const UjianTasmi = () => {
                         <TableHead>Kelas</TableHead>
                         <TableHead className="text-center">Jumlah Hafalan</TableHead>
                         <TableHead className="text-center">Juz Berikutnya</TableHead>
-                        <TableHead className="text-center">Daftarkan</TableHead>
+                        <TableHead className="text-center">Status</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -279,7 +279,7 @@ const UjianTasmi = () => {
                                   onClick={() => handleUjian(student)}
                                 >
                                   <CheckCircle2 className="w-3 h-3 mr-1" />
-                                  Daftar Ujian
+                                  Daftarkan
                                 </Button>
                               </TableCell>
                             </TableRow>
