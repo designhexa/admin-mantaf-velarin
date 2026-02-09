@@ -212,65 +212,110 @@
    aspekPenilaian: { tartil: true, fashohah: true, tajwidDasar: true, ghorib: true },
  };
  
- // Kriteria penilaian ujian kenaikan jilid
- export const KRITERIA_PENILAIAN: KriteriaPenilaian[] = [
-   {
-     id: "tartil",
-     aspek: "Tartil",
-     subAspek: [
-       "Kesempurnaan Tajwid",
-       "Kesempurnaan Kalimat",
-       "Kelancaran",
-       "Nafas",
-       "Waqaf",
-     ],
-     skorMaksimal: 25,
-   },
-   {
-     id: "fashohah",
-     aspek: "Fashohah",
-     subAspek: [
-       "Kesempurnaan makhorijul huruf",
-       "Kesempurnaan Shifatul huruf",
-       "Kesempurnaan Harakat tidak imalah",
-       "Suara yang jelas",
-     ],
-     skorMaksimal: 25,
-   },
-   {
-     id: "tajwid_dasar",
-     aspek: "Tajwid Dasar",
-     subAspek: [
-       "Paham dan mampu menguraikan hukum tajwid",
-     ],
-     skorMaksimal: 25,
-   },
-   {
-     id: "ghorib",
-     aspek: "Ghoribul Qur'an",
-     subAspek: [
-       "Membaca Ghorib",
-       "Komentar Ghorib",
-     ],
-     skorMaksimal: 25,
-   },
- ];
- 
- // Kriteria kelulusan per jilid
- export const KRITERIA_KELULUSAN: Record<number, string[]> = {
-   1: ["fashohah", "tartil"], // Jilid 1-3: Fashohah & Tartil
-   2: ["fashohah", "tartil"],
-   3: ["fashohah", "tartil"],
-   4: ["tartil", "fashohah", "tajwid_dasar"], // Jilid 4-5: Tartil, Fashohah & Tajwid Dasar
-   5: ["tartil", "fashohah", "tajwid_dasar"],
-   6: ["tartil", "fashohah", "tajwid_dasar", "ghorib"], // Jilid 6: Lengkap
- };
- 
- // Durasi ujian standar (menit)
- export const DURASI_UJIAN = 5;
- 
- // Nilai minimum untuk lulus
- export const NILAI_MINIMUM_LULUS = 70;
+// Kriteria penilaian ujian kenaikan jilid (Skor Maksimal per aspek: 10, Total: 40)
+export const KRITERIA_PENILAIAN: KriteriaPenilaian[] = [
+  {
+    id: "tartil",
+    aspek: "Tartil",
+    subAspek: [
+      "Kesempurnaan Tajwid",
+      "Kesempurnaan Kalimat",
+      "Kelancaran",
+      "Nafas",
+      "Waqaf",
+    ],
+    skorMaksimal: 10,
+  },
+  {
+    id: "fashohah",
+    aspek: "Fashohah",
+    subAspek: [
+      "Kesempurnaan makhorijul huruf",
+      "Kesempurnaan Shifatul huruf",
+      "Kesempurnaan Harakat tidak imalah",
+      "Suara yang jelas",
+    ],
+    skorMaksimal: 10,
+  },
+  {
+    id: "tajwid_dasar",
+    aspek: "Tajwid Dasar",
+    subAspek: [
+      "Paham menguraikan hukum tajwid",
+      "Mampu menguraikan hukum tajwid",
+    ],
+    skorMaksimal: 10,
+  },
+  {
+    id: "ghorib",
+    aspek: "Ghoribul Qur'an",
+    subAspek: [
+      "Membaca Ghorib",
+      "Komentar Ghorib",
+    ],
+    skorMaksimal: 10,
+  },
+];
+
+// Skor maksimal per sub-aspek
+export const SKOR_SUB_ASPEK = {
+  // Tartil (Total: 10)
+  tartil: {
+    kesempurnaanTajwid: 2,
+    kesempurnaanKalimat: 2,
+    kelancaran: 4,
+    nafas: 1,
+    waqaf: 1,
+  },
+  // Fashohah (Total: 10)
+  fashohah: {
+    makhorijulHuruf: 4,
+    shifatulHuruf: 3,
+    harakatTidakImalah: 2,
+    suaraJelas: 1,
+  },
+  // Tajwid Dasar (Total: 10)
+  tajwidDasar: {
+    pahamHukum: 5,
+    mampuMenguraikan: 5,
+  },
+  // Ghoribul Qur'an (Total: 10)
+  ghorib: {
+    membacaGhorib: 6,
+    komentarGhorib: 4,
+  },
+};
+
+// Skor total maksimal
+export const SKOR_TOTAL_MAKSIMAL = 40;
+
+// Kriteria kelulusan per jilid
+export const KRITERIA_KELULUSAN: Record<number, string[]> = {
+  1: ["fashohah", "tartil"], // Jilid 1-3: Fashohah & Tartil
+  2: ["fashohah", "tartil"],
+  3: ["fashohah", "tartil"],
+  4: ["tartil", "fashohah", "tajwid_dasar"], // Jilid 4-5: Tartil, Fashohah & Tajwid Dasar
+  5: ["tartil", "fashohah", "tajwid_dasar"],
+  6: ["tartil", "fashohah", "tajwid_dasar", "ghorib"], // Jilid 6: Lengkap
+};
+
+// Durasi ujian standar (menit)
+export const DURASI_UJIAN = 5;
+
+// Nilai minimum untuk lulus (persentase dari skor maksimal yang berlaku)
+export const NILAI_MINIMUM_LULUS = 70; // 70% dari skor maksimal
+
+// Hitung skor maksimal berdasarkan jilid
+export const getSkorMaksimalByJilid = (jilid: number): number => {
+  const kriteria = KRITERIA_KELULUSAN[jilid] || ["tartil", "fashohah", "tajwid_dasar", "ghorib"];
+  return kriteria.length * 10; // Setiap aspek maks 10
+};
+
+// Hitung nilai minimum lulus berdasarkan jilid
+export const getNilaiMinimumLulusByJilid = (jilid: number): number => {
+  const skorMaksimal = getSkorMaksimalByJilid(jilid);
+  return Math.round((NILAI_MINIMUM_LULUS / 100) * skorMaksimal);
+};
  
  // Helper functions
  export const getJilidByHalaman = (halamanTotal: number): number => {

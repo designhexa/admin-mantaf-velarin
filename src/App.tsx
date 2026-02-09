@@ -29,6 +29,7 @@ import TilawahRapor from "./pages/TilawahRapor";
 import AkademikDashboard from "./pages/AkademikDashboard";
 import AkademikImpor from "./pages/AkademikImpor";
 import AkademikRapor from "./pages/AkademikRapor";
+import AkademikRaporDiniyah from "./pages/AkademikRaporDiniyah";
 // Profil & Pengaturan
 import Profil from "./pages/Profil";
 import Pengaturan from "./pages/Pengaturan";
@@ -67,6 +68,7 @@ const App = () => (
             <Route path="/akademik/dashboard" element={<AkademikDashboard />} />
             <Route path="/akademik/impor" element={<AkademikImpor />} />
             <Route path="/akademik/rapor" element={<AkademikRapor />} />
+            <Route path="/akademik/rapor-diniyah" element={<AkademikRaporDiniyah />} />
             {/* Profil & Pengaturan */}
             <Route path="/profil" element={<Profil />} />
             <Route path="/pengaturan" element={<Pengaturan />} />
