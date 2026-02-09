@@ -500,11 +500,11 @@ export default function TilawahUjian() {
                        <TableCell>{ujian.jilidTujuan <= 6 ? `Jilid ${ujian.jilidTujuan}` : "Al-Qur'an"}</TableCell>
                        <TableCell className="font-bold text-center">{ujian.nilaiTotal}</TableCell>
                        <TableCell className="text-center">
-                         <Badge variant={ujian.status === "lulus" ? "default" : "destructive"}>
-                           {ujian.status === "lulus" ? "Lulus" : "Mengulang"}
+                         <Badge className={item.status === "Lulus" ? "bg-green-600" : "bg-red-600"}>
+                           {item.status}
                          </Badge>
                        </TableCell>
-                     </TableRow>
+                    </TableRow>
                    ))
                  ) : (
                    <TableRow>
