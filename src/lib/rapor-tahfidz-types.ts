@@ -108,12 +108,17 @@ export const BULAN_SEMESTER: Record<string, string[]> = {
 };
 
 // Mock data untuk demo
-export const mockRaporData: RaporTahfidz = {
+export const getMockRaporData = (santri: {
+    id: string;
+  nama: string;
+  nis?: string;
+  kelas?: string;
+}): RaporTahfidz => ({
   identitas: {
-    nama: "Fulan Fulanah",
-    nis: "S001",
+    nama: santri.nama,
+    nis: santri.nis || santri.id,
     nisn: "1020267157",
-    kelas: "7 (Tujuh)",
+    kelas: santri.kelas || "-",
     semester: "Ganjil",
     tahunAjaran: "2025/2026",
   },
@@ -198,4 +203,4 @@ export const mockRaporData: RaporTahfidz = {
   tanggalCetak: "20 Desember 2025",
   waliKelas: "Qurrotu Aini, S.Si., MT.",
   kepalaSekolah: "Nanang Kosim, S.Si.",
-};
+});
