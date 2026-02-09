@@ -161,78 +161,6 @@ export const mockSantriProgress: StudentProgress[] = [
   },
   {
     id: "2",
-    nama: "Muhammad Zidan Ar Rasyid",
-    nis: "S002",
-    kelas: "Kelas 5",
-    kelasNumber: "5",
-    halaqoh: "Halaqoh An-Nur",
-    jumlahJuzHafal: 4,
-    juzSelesai: [30, 29, 28, 27],
-    drillSelesai: true,
-    eligibleForTasmi: true
-  },
-  {
-    id: "3",
-    nama: "Hamzah Abdurrohman",
-    nis: "S003",
-    kelas: "Kelas 5",
-    kelasNumber: "5",
-    halaqoh: "Halaqoh Al-Fatih",
-    jumlahJuzHafal: 9,
-    juzSelesai: [30, 29, 28, 27, 26, 1, 2, 3, 4],
-    drillSelesai: true,
-    eligibleForTasmi: true
-  },
-  {
-    id: "4",
-    nama: "Fahimah Nadeen Darmawan",
-    nis: "S004",
-    kelas: "Kelas 6",
-    kelasNumber: "6",
-    halaqoh: "Halaqoh An-Nur",
-    jumlahJuzHafal: 9,
-    juzSelesai: [30, 29, 28, 27, 26, 1, 2, 3, 4],
-    drillSelesai: true,
-    eligibleForTasmi: true
-  },
-  {
-    id: "5",
-    nama: "Mazzayanun Nisa Zakirah Ali Maulana",
-    nis: "S005",
-    kelas: "Kelas 6",
-    kelasNumber: "6",
-    halaqoh: "Halaqoh Al-Fatih",
-    jumlahJuzHafal: 8,
-    juzSelesai: [30, 29, 28, 27, 26, 1, 2, 3],
-    drillSelesai: true,
-    eligibleForTasmi: true
-  },
-  {
-    id: "6",
-    nama: "Umar Abdurrohman",
-    nis: "S006",
-    kelas: "Kelas 6",
-    kelasNumber: "6",
-    halaqoh: "Halaqoh An-Nur",
-    jumlahJuzHafal: 13,
-    juzSelesai: [30, 29, 28, 27, 26, 1, 2, 3, 4, 5, 6, 7, 8],
-    drillSelesai: true,
-    eligibleForTasmi: true
-  },
-  {
-    id: "7",
-    nama: "Aisyah Mentari Azzahra",
-    nis: "S007",
-    kelas: "Kelas 8",
-    kelasNumber: "8",
-    halaqoh: "Halaqoh Al-Fatih",
-    jumlahJuzHafal: 5,
-    juzSelesai: [30, 29, 28, 27, 26],
-    drillSelesai: true,
-    eligibleForTasmi: true
-  },
-  {
-    id: "8",
     nama: "Ahmad Fauzi",
     nis: "S008",
     kelas: "Kelas 1",
@@ -244,7 +172,7 @@ export const mockSantriProgress: StudentProgress[] = [
     eligibleForTasmi: false
   },
   {
-    id: "9",
+    id: "3",
     nama: "Fatimah Zahra",
     nis: "S009",
     kelas: "Kelas 2",
@@ -256,7 +184,7 @@ export const mockSantriProgress: StudentProgress[] = [
     eligibleForTasmi: true
   },
   {
-    id: "10",
+    id: "4",
     nama: "Muhammad Rizki",
     nis: "S010",
     kelas: "Kelas 3",
@@ -264,6 +192,78 @@ export const mockSantriProgress: StudentProgress[] = [
     halaqoh: "Halaqoh Al-Fatih",
     jumlahJuzHafal: 2,
     juzSelesai: [30, 29],
+    drillSelesai: true,
+    eligibleForTasmi: true
+  },
+  {
+    id: "5",
+    nama: "Muhammad Zidan Ar Rasyid",
+    nis: "S002",
+    kelas: "Kelas 5",
+    kelasNumber: "5",
+    halaqoh: "Halaqoh An-Nur",
+    jumlahJuzHafal: 4,
+    juzSelesai: [30, 29, 28, 27],
+    drillSelesai: true,
+    eligibleForTasmi: true
+  },
+  {
+    id: "6",
+    nama: "Hamzah Abdurrohman",
+    nis: "S003",
+    kelas: "Kelas 5",
+    kelasNumber: "5",
+    halaqoh: "Halaqoh Al-Fatih",
+    jumlahJuzHafal: 9,
+    juzSelesai: [30, 29, 28, 27, 26, 1, 2, 3, 4],
+    drillSelesai: true,
+    eligibleForTasmi: true
+  },
+  {
+    id: "7",
+    nama: "Fahimah Nadeen Darmawan",
+    nis: "S004",
+    kelas: "Kelas 6",
+    kelasNumber: "6",
+    halaqoh: "Halaqoh An-Nur",
+    jumlahJuzHafal: 9,
+    juzSelesai: [30, 29, 28, 27, 26, 1, 2, 3, 4],
+    drillSelesai: true,
+    eligibleForTasmi: true
+  },
+  {
+    id: "8",
+    nama: "Mazzayanun Nisa Zakirah Ali Maulana",
+    nis: "S005",
+    kelas: "Kelas 6",
+    kelasNumber: "6",
+    halaqoh: "Halaqoh Al-Fatih",
+    jumlahJuzHafal: 8,
+    juzSelesai: [30, 29, 28, 27, 26, 1, 2, 3],
+    drillSelesai: true,
+    eligibleForTasmi: true
+  },
+  {
+    id: "9",
+    nama: "Umar Abdurrohman",
+    nis: "S006",
+    kelas: "Kelas 6",
+    kelasNumber: "6",
+    halaqoh: "Halaqoh An-Nur",
+    jumlahJuzHafal: 13,
+    juzSelesai: [30, 29, 28, 27, 26, 1, 2, 3, 4, 5, 6, 7, 8],
+    drillSelesai: true,
+    eligibleForTasmi: true
+  },
+  {
+    id: "10",
+    nama: "Aisyah Mentari Azzahra",
+    nis: "S007",
+    kelas: "Kelas 8",
+    kelasNumber: "8",
+    halaqoh: "Halaqoh Al-Fatih",
+    jumlahJuzHafal: 5,
+    juzSelesai: [30, 29, 28, 27, 26],
     drillSelesai: true,
     eligibleForTasmi: true
   }

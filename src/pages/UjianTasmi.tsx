@@ -246,7 +246,7 @@ const UjianTasmi = () => {
                         <TableHead>Kelas</TableHead>
                         <TableHead className="text-center">Jumlah Hafalan</TableHead>
                         <TableHead className="text-center">Juz Berikutnya</TableHead>
-                        <TableHead className="text-center">Status</TableHead>
+                        <TableHead className="text-center">Daftarkan</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
