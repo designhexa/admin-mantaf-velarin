@@ -478,15 +478,22 @@ export default function TilawahUjian() {
             </div>
 
             <Table className="table-fixed w-full">
+            <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>No</TableHead>
+                {/* No → kecil & center */}
+                <TableHead className="w-12 text-center">No</TableHead>
+
                 <TableHead>Nama Santri</TableHead>
                 <TableHead>Kelas</TableHead>
                 <TableHead>Jilid Dari</TableHead>
                 <TableHead>Naik ke</TableHead>
-                <TableHead className="text-center">Nilai Total</TableHead>
-                <TableHead className="text-center">Status</TableHead>
+
+                {/* Nilai center */}
+                <TableHead className="text-center w-24">Nilai Total</TableHead>
+
+                {/* Status center */}
+                <TableHead className="text-center w-28">Status</TableHead>
               </TableRow>
             </TableHeader>
 
@@ -498,29 +505,54 @@ export default function TilawahUjian() {
                   </TableCell>
                 </TableRow>
               ) : (
-                mockUjianData.map((item, index) => (
-                  <TableRow key={item.id}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell className="font-medium">{item.nama}</TableCell>
-                    <TableCell>{item.kelas}</TableCell>
-                    <TableCell>Jilid {item.jilidDari}</TableCell>
-                    <TableCell>
-                      {item.jilidTujuan <= 6 ? `Jilid ${item.jilidTujuan}` : "Al-Qur'an"}
-                    </TableCell>
+                mockUjianData.map((item, index) => {
+                  const isLulus = item.status?.toLowerCase() === "lulus";
 
-                    {/* Nilai center */}
-                    <TableCell className="text-center font-semibold">
-                      {item.nilaiTotal}
-                    </TableCell>
+                  return (
+                    <TableRow key={item.id}>
+                      {/* No */}
+                      <TableCell className="text-center w-12">
+                        {index + 1}
+                      </TableCell>
 
-                    {/* Status sama persis seperti contoh kamu */}
-                    <TableCell className="text-center">
-                      <Badge className={item.status === "Lulus" ? "bg-green-600" : "bg-red-600"}>
-                        {item.status}
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
-                ))
+                      <TableCell className="font-medium">
+                        {item.nama}
+                      </TableCell>
+
+                      <TableCell>
+                        {item.kelas}
+                      </TableCell>
+
+                      <TableCell>
+                        Jilid {item.jilidDari}
+                      </TableCell>
+
+                      <TableCell>
+                        {item.jilidTujuan <= 6
+                          ? `Jilid ${item.jilidTujuan}`
+                          : "Al-Qur'an"}
+                      </TableCell>
+
+                      {/* Nilai */}
+                      <TableCell className="text-center font-semibold w-24">
+                        {item.nilaiTotal}
+                      </TableCell>
+
+                      {/* Status */}
+                      <TableCell className="text-center w-28">
+                        <Badge
+                          className={
+                            isLulus
+                              ? "bg-green-600 text-white hover:bg-green-700"
+                              : "bg-red-600 text-white hover:bg-red-700"
+                          }
+                        >
+                          {item.status}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
               )}
             </TableBody>
           </Table>
