@@ -10,15 +10,18 @@
  import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
  import { Search, Plus, Award, Clock, FileText } from "lucide-react";
  import { useState } from "react";
- import { 
-   MOCK_SANTRI_TILAWAH, 
-   TILAWATI_JILID,
-   KRITERIA_PENILAIAN,
-   KRITERIA_KELULUSAN,
-   DURASI_UJIAN,
-   NILAI_MINIMUM_LULUS
- } from "@/lib/tilawah-data";
- import { toast } from "sonner";
+import { 
+  MOCK_SANTRI_TILAWAH, 
+  TILAWATI_JILID,
+  KRITERIA_PENILAIAN,
+  KRITERIA_KELULUSAN,
+  DURASI_UJIAN,
+  SKOR_SUB_ASPEK,
+  SKOR_TOTAL_MAKSIMAL,
+  getSkorMaksimalByJilid,
+  getNilaiMinimumLulusByJilid
+} from "@/lib/tilawah-data";
+import { toast } from "sonner";
 
 export default function TilawahUjian() {
   const [search, setSearch] = useState("");
@@ -65,53 +68,51 @@ export default function TilawahUjian() {
      const jilid = parseInt(jilidDari) || 1;
      const kriteria = getKriteriaByJilid(jilid);
      let total = 0;
-     let count = 0;
- 
-     // Tartil
+
+     // Tartil (max 10)
      if (kriteria.includes("tartil")) {
-       const tartil = [tartilTajwid, tartilKalimat, tartilKelancaran, tartilNafas, tartilWaqaf]
-         .filter(v => v !== "")
-         .map(v => parseInt(v) || 0);
-       if (tartil.length > 0) {
-         total += tartil.reduce((a, b) => a + b, 0) / tartil.length;
-         count++;
-       }
+       const t1 = parseFloat(tartilTajwid) || 0;
+       const t2 = parseFloat(tartilKalimat) || 0;
+       const t3 = parseFloat(tartilKelancaran) || 0;
+       const t4 = parseFloat(tartilNafas) || 0;
+       const t5 = parseFloat(tartilWaqaf) || 0;
+       total += Math.min(t1 + t2 + t3 + t4 + t5, 10);
      }
- 
-     // Fashohah
+
+     // Fashohah (max 10)
      if (kriteria.includes("fashohah")) {
-       const fashohah = [fashohahMakhraj, fashohahShifat, fashohahHarakat, fashohahSuara]
-         .filter(v => v !== "")
-         .map(v => parseInt(v) || 0);
-       if (fashohah.length > 0) {
-         total += fashohah.reduce((a, b) => a + b, 0) / fashohah.length;
-         count++;
-       }
+       const f1 = parseFloat(fashohahMakhraj) || 0;
+       const f2 = parseFloat(fashohahShifat) || 0;
+       const f3 = parseFloat(fashohahHarakat) || 0;
+       const f4 = parseFloat(fashohahSuara) || 0;
+       total += Math.min(f1 + f2 + f3 + f4, 10);
      }
- 
-     // Tajwid
+
+     // Tajwid (max 10)
      if (kriteria.includes("tajwid_dasar")) {
-       const tajwid = [tajwidPaham, tajwidUraian]
-         .filter(v => v !== "")
-         .map(v => parseInt(v) || 0);
-       if (tajwid.length > 0) {
-         total += tajwid.reduce((a, b) => a + b, 0) / tajwid.length;
-         count++;
-       }
+       const tj1 = parseFloat(tajwidPaham) || 0;
+       const tj2 = parseFloat(tajwidUraian) || 0;
+       total += Math.min(tj1 + tj2, 10);
      }
- 
-     // Ghorib
+
+     // Ghorib (max 10)
      if (kriteria.includes("ghorib")) {
-       const ghorib = [ghoribBaca, ghoribKomentar]
-         .filter(v => v !== "")
-         .map(v => parseInt(v) || 0);
-       if (ghorib.length > 0) {
-         total += ghorib.reduce((a, b) => a + b, 0) / ghorib.length;
-         count++;
-       }
+       const g1 = parseFloat(ghoribBaca) || 0;
+       const g2 = parseFloat(ghoribKomentar) || 0;
+       total += Math.min(g1 + g2, 10);
      }
- 
-     return count > 0 ? Math.round(total / count) : 0;
+
+     return Math.round(total * 10) / 10; // Round to 1 decimal
+   };
+
+   const getSkorMaksimal = () => {
+     const jilid = parseInt(jilidDari) || 1;
+     return getSkorMaksimalByJilid(jilid);
+   };
+
+   const getNilaiMinimum = () => {
+     const jilid = parseInt(jilidDari) || 1;
+     return getNilaiMinimumLulusByJilid(jilid);
    };
  
    const handleSubmit = () => {
@@ -119,11 +120,12 @@ export default function TilawahUjian() {
        toast.error("Lengkapi data ujian");
        return;
      }
- 
+
      const totalNilai = hitungTotalNilai();
-     const lulus = totalNilai >= NILAI_MINIMUM_LULUS;
- 
-     toast.success(`Ujian berhasil disimpan. Nilai: ${totalNilai} - ${lulus ? "LULUS" : "TIDAK LULUS"}`);
+     const nilaiMinimum = getNilaiMinimum();
+     const lulus = totalNilai >= nilaiMinimum;
+
+     toast.success(`Ujian berhasil disimpan. Nilai: ${totalNilai}/${getSkorMaksimal()} - ${lulus ? "LULUS" : "TIDAK LULUS"}`);
      setDialogOpen(false);
      resetForm();
    };
@@ -173,17 +175,21 @@ export default function TilawahUjian() {
                </DialogHeader>
                
                <div className="space-y-4 pt-4">
-                 {/* Info Ujian */}
+               {/* Info Ujian */}
                  <Card className="bg-muted/50">
                    <CardContent className="pt-4">
-                     <div className="flex items-center gap-4 text-sm">
+                     <div className="flex flex-wrap items-center gap-4 text-sm">
                        <div className="flex items-center gap-2">
                          <Clock className="w-4 h-4 text-muted-foreground" />
                          <span>Durasi: {DURASI_UJIAN} menit per santri</span>
                        </div>
                        <div className="flex items-center gap-2">
                          <FileText className="w-4 h-4 text-muted-foreground" />
-                         <span>Nilai Minimum Lulus: {NILAI_MINIMUM_LULUS}</span>
+                         <span>Skor Maksimal: {jilidDari ? getSkorMaksimal() : SKOR_TOTAL_MAKSIMAL}</span>
+                       </div>
+                       <div className="flex items-center gap-2">
+                         <Award className="w-4 h-4 text-muted-foreground" />
+                         <span>Nilai Minimum Lulus: {jilidDari ? getNilaiMinimum() : "70%"}</span>
                        </div>
                      </div>
                    </CardContent>
@@ -278,30 +284,33 @@ export default function TilawahUjian() {
                    <TabsContent value="tartil" className="mt-4">
                      <Card>
                        <CardHeader className="pb-3">
-                         <CardTitle className="text-sm">Penilaian Tartil</CardTitle>
+                         <CardTitle className="text-sm flex items-center justify-between">
+                           <span>Penilaian Tartil</span>
+                           <Badge variant="outline">Maks: 10</Badge>
+                         </CardTitle>
                          <CardDescription>Kesempurnaan bacaan, kelancaran, dan ketertiban</CardDescription>
                        </CardHeader>
                        <CardContent className="space-y-3">
                          <div className="grid grid-cols-2 gap-4">
                            <div className="space-y-2">
-                             <Label className="text-xs">Kesempurnaan Tajwid (0-100)</Label>
-                             <Input type="number" min={0} max={100} value={tartilTajwid} onChange={(e) => setTartilTajwid(e.target.value)} />
+                             <Label className="text-xs">Kesempurnaan Tajwid (0-2)</Label>
+                             <Input type="number" min={0} max={2} step={0.5} value={tartilTajwid} onChange={(e) => setTartilTajwid(e.target.value)} placeholder="0-2" />
                            </div>
                            <div className="space-y-2">
-                             <Label className="text-xs">Kesempurnaan Kalimat (0-100)</Label>
-                             <Input type="number" min={0} max={100} value={tartilKalimat} onChange={(e) => setTartilKalimat(e.target.value)} />
+                             <Label className="text-xs">Kesempurnaan Kalimat (0-2)</Label>
+                             <Input type="number" min={0} max={2} step={0.5} value={tartilKalimat} onChange={(e) => setTartilKalimat(e.target.value)} placeholder="0-2" />
                            </div>
                            <div className="space-y-2">
-                             <Label className="text-xs">Kelancaran (0-100)</Label>
-                             <Input type="number" min={0} max={100} value={tartilKelancaran} onChange={(e) => setTartilKelancaran(e.target.value)} />
+                             <Label className="text-xs">Kelancaran (0-4)</Label>
+                             <Input type="number" min={0} max={4} step={0.5} value={tartilKelancaran} onChange={(e) => setTartilKelancaran(e.target.value)} placeholder="0-4" />
                            </div>
                            <div className="space-y-2">
-                             <Label className="text-xs">Nafas (0-100)</Label>
-                             <Input type="number" min={0} max={100} value={tartilNafas} onChange={(e) => setTartilNafas(e.target.value)} />
+                             <Label className="text-xs">Nafas (0-1)</Label>
+                             <Input type="number" min={0} max={1} step={0.5} value={tartilNafas} onChange={(e) => setTartilNafas(e.target.value)} placeholder="0-1" />
                            </div>
                            <div className="space-y-2 col-span-2">
-                             <Label className="text-xs">Waqaf (0-100)</Label>
-                             <Input type="number" min={0} max={100} value={tartilWaqaf} onChange={(e) => setTartilWaqaf(e.target.value)} />
+                             <Label className="text-xs">Waqaf (0-1)</Label>
+                             <Input type="number" min={0} max={1} step={0.5} value={tartilWaqaf} onChange={(e) => setTartilWaqaf(e.target.value)} placeholder="0-1" />
                            </div>
                          </div>
                        </CardContent>
@@ -311,26 +320,29 @@ export default function TilawahUjian() {
                    <TabsContent value="fashohah" className="mt-4">
                      <Card>
                        <CardHeader className="pb-3">
-                         <CardTitle className="text-sm">Penilaian Fashohah</CardTitle>
+                         <CardTitle className="text-sm flex items-center justify-between">
+                           <span>Penilaian Fashohah</span>
+                           <Badge variant="outline">Maks: 10</Badge>
+                         </CardTitle>
                          <CardDescription>Kesempurnaan makhorijul huruf dan shifatul huruf</CardDescription>
                        </CardHeader>
                        <CardContent className="space-y-3">
                          <div className="grid grid-cols-2 gap-4">
                            <div className="space-y-2">
-                             <Label className="text-xs">Makhorijul Huruf (0-100)</Label>
-                             <Input type="number" min={0} max={100} value={fashohahMakhraj} onChange={(e) => setFashohahMakhraj(e.target.value)} />
+                             <Label className="text-xs">Makhorijul Huruf (0-4)</Label>
+                             <Input type="number" min={0} max={4} step={0.5} value={fashohahMakhraj} onChange={(e) => setFashohahMakhraj(e.target.value)} placeholder="0-4" />
                            </div>
                            <div className="space-y-2">
-                             <Label className="text-xs">Shifatul Huruf (0-100)</Label>
-                             <Input type="number" min={0} max={100} value={fashohahShifat} onChange={(e) => setFashohahShifat(e.target.value)} />
+                             <Label className="text-xs">Shifatul Huruf (0-3)</Label>
+                             <Input type="number" min={0} max={3} step={0.5} value={fashohahShifat} onChange={(e) => setFashohahShifat(e.target.value)} placeholder="0-3" />
                            </div>
                            <div className="space-y-2">
-                             <Label className="text-xs">Harakat Tidak Imalah (0-100)</Label>
-                             <Input type="number" min={0} max={100} value={fashohahHarakat} onChange={(e) => setFashohahHarakat(e.target.value)} />
+                             <Label className="text-xs">Harakat Tidak Imalah (0-2)</Label>
+                             <Input type="number" min={0} max={2} step={0.5} value={fashohahHarakat} onChange={(e) => setFashohahHarakat(e.target.value)} placeholder="0-2" />
                            </div>
                            <div className="space-y-2">
-                             <Label className="text-xs">Suara Jelas (0-100)</Label>
-                             <Input type="number" min={0} max={100} value={fashohahSuara} onChange={(e) => setFashohahSuara(e.target.value)} />
+                             <Label className="text-xs">Suara Jelas (0-1)</Label>
+                             <Input type="number" min={0} max={1} step={0.5} value={fashohahSuara} onChange={(e) => setFashohahSuara(e.target.value)} placeholder="0-1" />
                            </div>
                          </div>
                        </CardContent>
@@ -340,18 +352,21 @@ export default function TilawahUjian() {
                    <TabsContent value="tajwid" className="mt-4">
                      <Card>
                        <CardHeader className="pb-3">
-                         <CardTitle className="text-sm">Penilaian Tajwid Dasar</CardTitle>
+                         <CardTitle className="text-sm flex items-center justify-between">
+                           <span>Penilaian Tajwid Dasar</span>
+                           <Badge variant="outline">Maks: 10</Badge>
+                         </CardTitle>
                          <CardDescription>Pemahaman dan kemampuan menguraikan hukum tajwid</CardDescription>
                        </CardHeader>
                        <CardContent className="space-y-3">
                          <div className="grid grid-cols-2 gap-4">
                            <div className="space-y-2">
-                             <Label className="text-xs">Paham Hukum Tajwid (0-100)</Label>
-                             <Input type="number" min={0} max={100} value={tajwidPaham} onChange={(e) => setTajwidPaham(e.target.value)} />
+                             <Label className="text-xs">Paham Menguraikan Hukum Tajwid (0-5)</Label>
+                             <Input type="number" min={0} max={5} step={0.5} value={tajwidPaham} onChange={(e) => setTajwidPaham(e.target.value)} placeholder="0-5" />
                            </div>
                            <div className="space-y-2">
-                             <Label className="text-xs">Mampu Menguraikan (0-100)</Label>
-                             <Input type="number" min={0} max={100} value={tajwidUraian} onChange={(e) => setTajwidUraian(e.target.value)} />
+                             <Label className="text-xs">Mampu Menguraikan Hukum Tajwid (0-5)</Label>
+                             <Input type="number" min={0} max={5} step={0.5} value={tajwidUraian} onChange={(e) => setTajwidUraian(e.target.value)} placeholder="0-5" />
                            </div>
                          </div>
                        </CardContent>
@@ -361,18 +376,21 @@ export default function TilawahUjian() {
                    <TabsContent value="ghorib" className="mt-4">
                      <Card>
                        <CardHeader className="pb-3">
-                         <CardTitle className="text-sm">Penilaian Ghoribul Qur'an</CardTitle>
+                         <CardTitle className="text-sm flex items-center justify-between">
+                           <span>Penilaian Ghoribul Qur'an</span>
+                           <Badge variant="outline">Maks: 10</Badge>
+                         </CardTitle>
                          <CardDescription>Kemampuan membaca dan memahami bacaan ghorib</CardDescription>
                        </CardHeader>
                        <CardContent className="space-y-3">
                          <div className="grid grid-cols-2 gap-4">
                            <div className="space-y-2">
-                             <Label className="text-xs">Membaca Ghorib (0-100)</Label>
-                             <Input type="number" min={0} max={100} value={ghoribBaca} onChange={(e) => setGhoribBaca(e.target.value)} />
+                             <Label className="text-xs">Membaca Ghorib (0-6)</Label>
+                             <Input type="number" min={0} max={6} step={0.5} value={ghoribBaca} onChange={(e) => setGhoribBaca(e.target.value)} placeholder="0-6" />
                            </div>
                            <div className="space-y-2">
-                             <Label className="text-xs">Komentar Ghorib (0-100)</Label>
-                             <Input type="number" min={0} max={100} value={ghoribKomentar} onChange={(e) => setGhoribKomentar(e.target.value)} />
+                             <Label className="text-xs">Komentar Ghorib (0-4)</Label>
+                             <Input type="number" min={0} max={4} step={0.5} value={ghoribKomentar} onChange={(e) => setGhoribKomentar(e.target.value)} placeholder="0-4" />
                            </div>
                          </div>
                        </CardContent>
@@ -386,15 +404,18 @@ export default function TilawahUjian() {
                      <div className="flex items-center justify-between">
                        <div>
                          <p className="text-sm text-muted-foreground">Total Nilai</p>
-                         <p className="text-3xl font-bold">{hitungTotalNilai()}</p>
+                         <p className="text-3xl font-bold">{hitungTotalNilai()} <span className="text-lg font-normal text-muted-foreground">/ {getSkorMaksimal()}</span></p>
                        </div>
                        <Badge 
-                         variant={hitungTotalNilai() >= NILAI_MINIMUM_LULUS ? "default" : "destructive"}
+                         variant={hitungTotalNilai() >= getNilaiMinimum() ? "default" : "destructive"}
                          className="text-lg px-4 py-2"
                        >
-                         {hitungTotalNilai() >= NILAI_MINIMUM_LULUS ? "LULUS" : "TIDAK LULUS"}
+                         {hitungTotalNilai() >= getNilaiMinimum() ? "LULUS" : "TIDAK LULUS"}
                        </Badge>
                      </div>
+                     <p className="text-xs text-muted-foreground mt-2">
+                       Minimum lulus: {getNilaiMinimum()} ({Math.round((getNilaiMinimum() / getSkorMaksimal()) * 100)}%)
+                     </p>
                    </CardContent>
                  </Card>
  

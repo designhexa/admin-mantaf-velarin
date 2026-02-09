@@ -57,6 +57,7 @@ const raporAkademikItems = [
   { title: "Dashboard", url: "/akademik/dashboard", icon: LayoutDashboard },
   { title: "Impor Data Nilai", url: "/akademik/impor", icon: Import },
   { title: "Rapor Akademik", url: "/akademik/rapor", icon: FileSpreadsheet },
+  { title: "Rapor Diniyah", url: "/akademik/rapor-diniyah", icon: BookMarked },
 ];
 
 const masterDataItems = [
