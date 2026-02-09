@@ -149,7 +149,9 @@ export default function TilawahUjian() {
      setGhoribKomentar("");
    };
  
-   const kriteriaPenilaian = jilidDari ? getKriteriaByJilid(parseInt(jilidDari)) : [];
+   const kriteriaPenilaian = jilidDari
+    ? getAspekPenilaianByJilid(parseInt(jilidDari))
+    : ["tartil", "fashohah", "tajwid_dasar", "ghorib"];
 
   return (
     <Layout>
