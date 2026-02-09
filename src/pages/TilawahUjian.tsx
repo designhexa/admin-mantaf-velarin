@@ -13,13 +13,12 @@
 import { 
   MOCK_SANTRI_TILAWAH, 
   TILAWATI_JILID,
-  KRITERIA_PENILAIAN,
   KRITERIA_KELULUSAN,
   DURASI_UJIAN,
-  SKOR_SUB_ASPEK,
   SKOR_TOTAL_MAKSIMAL,
   getSkorMaksimalByJilid,
-  getNilaiMinimumLulusByJilid
+  getNilaiMinimumLulusByJilid,
+  getAspekPenilaianByJilid
 } from "@/lib/tilawah-data";
 import { toast } from "sonner";
 
