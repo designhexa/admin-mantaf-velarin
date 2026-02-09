@@ -125,7 +125,7 @@ export default function TilawahUjian() {
      const nilaiMinimum = getNilaiMinimum();
      const lulus = totalNilai >= nilaiMinimum;
 
-     toast.success(`Ujian berhasil disimpan. Nilai: ${totalNilai}/${getSkorMaksimal()} - ${lulus ? "LULUS" : "TIDAK LULUS"}`);
+     toast.success(`Ujian berhasil disimpan. Nilai: ${totalNilai}/${getSkorMaksimal()} - ${lulus ? "LULUS" : "MENGULANG"}`);
      setDialogOpen(false);
      resetForm();
    };
