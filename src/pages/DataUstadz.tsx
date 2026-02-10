@@ -21,39 +21,7 @@ import {
 } from "@/components/ui/dialog";
 import { Plus, Pencil, Trash2, Search, Phone, Mail, Users } from "lucide-react";
 import { toast } from "sonner";
-
-const mockUstadz = [
-  {
-    id: "1",
-    nama: "Ustadz Ahmad Fauzi",
-    email: "ahmad@tahfidz.com",
-    phone: "081234567891",
-    halaqohCount: 1,
-    santriCount: 2,
-    halaqohBinaan: ["Halaqoh Al-Azhary"],
-    status: "Aktif",
-  },
-  {
-    id: "2",
-    nama: "Ustadz Budi Santoso",
-    email: "budi@tahfidz.com",
-    phone: "081234567892",
-    halaqohCount: 1,
-    santriCount: 2,
-    halaqohBinaan: ["Halaqoh Al-Furqon"],
-    status: "Aktif",
-  },
-  {
-    id: "3",
-    nama: "Ustadz Muhammad Yusuf",
-    email: "yusuf@tahfidz.com",
-    phone: "081234567893",
-    halaqohCount: 1,
-    santriCount: 2,
-    halaqohBinaan: ["Halaqoh Al-Hidayah"],
-    status: "Aktif",
-  },
-];
+import { MOCK_USTADZ, getUstadzHalaqoh, getSantriByHalaqoh } from "@/lib/mock-data";
 
 export default function DataUstadz() {
   const [search, setSearch] = useState("");
@@ -62,7 +30,7 @@ export default function DataUstadz() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
 
-  const filteredUstadz = mockUstadz.filter((u) =>
+  const filteredUstadz = MOCK_USTADZ.filter((u) =>
     u.nama.toLowerCase().includes(search.toLowerCase()) ||
     u.email.toLowerCase().includes(search.toLowerCase())
   );
@@ -162,52 +130,63 @@ export default function DataUstadz() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredUstadz.map((ustadz, index) => (
-                <TableRow key={ustadz.id}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell className="font-medium text-primary">{ustadz.nama}</TableCell>
-                  <TableCell className="flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-muted-foreground" />
-                    {ustadz.email}
-                  </TableCell>
-                  <TableCell>
-                    <span className="flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-muted-foreground" />
-                      {ustadz.phone}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex flex-wrap gap-1">
-                      {ustadz.halaqohBinaan.map((h) => (
-                        <Badge key={h} variant="outline" className="text-xs">
-                          {h}
-                        </Badge>
-                      ))}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <span className="flex items-center gap-1">
-                      <Users className="w-4 h-4 text-muted-foreground" />
-                      {ustadz.santriCount} santri
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="default" className="bg-primary/10 text-primary hover:bg-primary/20">
-                      {ustadz.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="icon" className="h-8 w-8">
-                        <Pencil className="w-4 h-4" />
-                      </Button>
-                      <Button variant="outline" size="icon" className="h-8 w-8 text-destructive hover:text-destructive">
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {filteredUstadz.map((ustadz, index) => {
+                const halaqohBinaan = getUstadzHalaqoh(ustadz.id);
+                const totalSantri = halaqohBinaan.reduce(
+                  (acc, h) => acc + getSantriByHalaqoh(h.id).length,
+                  0
+                );
+                return (
+                  <TableRow key={ustadz.id}>
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell className="font-medium text-primary">{ustadz.nama}</TableCell>
+                    <TableCell className="flex items-center gap-2">
+                      <Mail className="w-4 h-4 text-muted-foreground" />
+                      {ustadz.email}
+                    </TableCell>
+                    <TableCell>
+                      <span className="flex items-center gap-2">
+                        <Phone className="w-4 h-4 text-muted-foreground" />
+                        {ustadz.phone}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1">
+                        {halaqohBinaan.length > 0 ? (
+                          halaqohBinaan.map((h) => (
+                            <Badge key={h.id} variant="outline" className="text-xs">
+                              {h.nama}
+                            </Badge>
+                          ))
+                        ) : (
+                          <span className="text-muted-foreground text-xs">-</span>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <span className="flex items-center gap-1">
+                        <Users className="w-4 h-4 text-muted-foreground" />
+                        {totalSantri} santri
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="default" className="bg-primary/10 text-primary hover:bg-primary/20">
+                        {ustadz.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex gap-2">
+                        <Button variant="outline" size="icon" className="h-8 w-8">
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                        <Button variant="outline" size="icon" className="h-8 w-8 text-destructive hover:text-destructive">
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </div>

@@ -82,54 +82,21 @@ export function getPredikatNilai(nilai: number): { predikat: string; prefix: str
   return { predikat: 'D', prefix: 'perlu belajar lebih giat lagi' };
 }
 
-// Mock data santri untuk rapor akademik
-export const mockSantriAkademik = [
-  {
-    id: "1",
-    nis: "261",
-    nisn: "0113806416",
-    nama: "Qurrata 'Ayun",
-    kelas: "8 (Delapan)",
-    statusNilai: "Lengkap",
-    statusRapor: "Belum Generate"
-  },
-  {
-    id: "2",
-    nis: "024",
-    nisn: "2137489265",
-    nama: "Azzahra Zainab",
-    kelas: "8 (Delapan)",
-    statusNilai: "Lengkap",
-    statusRapor: "Sudah Generate"
-  },
-  {
-    id: "3",
-    nis: "128",
-    nisn: "0116049771",
-    nama: "Fayyadah Fayola",
-    kelas: "8 (Delapan)",
-    statusNilai: "Sebagian",
-    statusRapor: "Belum Generate"
-  },
-  {
-    id: "4",
-    nis: "001",
-    nisn: "2115038077",
-    nama: "Dzaki Ash Shiddiq",
-    kelas: "8 (Delapan)",
-    statusNilai: "Lengkap",
-    statusRapor: "Sudah Generate"
-  },
-  {
-    id: "5",
-    nis: "230",
-    nisn: "0108552956",
-    nama: "Salwah Lathifah Wasiso",
-    kelas: "8 (Delapan)",
-    statusNilai: "Lengkap",
-    statusRapor: "Belum Generate"
-  }
-];
+// Mock data santri untuk rapor akademik - derived from centralized data
+import { MOCK_SANTRI, getKelasNama } from "@/lib/mock-data";
+
+const statusNilaiOptions = ["Lengkap", "Sebagian", "Belum Ada"];
+const statusRaporOptions = ["Sudah Generate", "Belum Generate"];
+
+export const mockSantriAkademik = MOCK_SANTRI.map((s, i) => ({
+  id: s.id,
+  nis: s.nis,
+  nisn: s.nisn,
+  nama: s.nama,
+  kelas: getKelasNama(s.idKelas),
+  statusNilai: statusNilaiOptions[i % 3],
+  statusRapor: statusRaporOptions[i % 2],
+}));
 
 // Mock data rapor akademik lengkap
 export const mockRaporAkademik: RaporAkademik = {

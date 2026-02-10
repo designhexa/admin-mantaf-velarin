@@ -1,5 +1,6 @@
  // Data struktur metode Tilawati
  // Total 6 jilid utama, masing-masing 44 halaman = 264 halaman total
+ import { MOCK_SANTRI, getKelasNama, getHalaqohNama } from "@/lib/mock-data";
  
  export interface TilawatiJilid {
    jilid: number;
@@ -355,18 +356,20 @@ export const getNilaiMinimumLulusByJilid = (jilid: number): number => {
    return count > 0 ? Math.round(total / count) : 0;
  };
  
- // Mock data for dashboard
+ // Mock data for dashboard - references MOCK_SANTRI from mock-data.ts
+
  export const MOCK_SETORAN_TILAWAH: SetoranTilawah[] = [
    {
      id: "1",
      idSantri: "s1",
      tanggal: new Date().toISOString().split('T')[0],
-     jilid: 2,
-     halamanDari: 15,
-     halamanSampai: 17,
+     jilid: 4,
+     halamanDari: 26,
+     halamanSampai: 28,
      nilaiTartil: 85,
      nilaiFashohah: 80,
-     nilaiRataRata: 83,
+     nilaiTajwid: 78,
+     nilaiRataRata: 81,
      status: 'selesai',
    },
    {
@@ -374,8 +377,8 @@ export const getNilaiMinimumLulusByJilid = (jilid: number): number => {
      idSantri: "s2",
      tanggal: new Date().toISOString().split('T')[0],
      jilid: 3,
-     halamanDari: 22,
-     halamanSampai: 24,
+     halamanDari: 20,
+     halamanSampai: 22,
      nilaiTartil: 78,
      nilaiFashohah: 82,
      nilaiRataRata: 80,
@@ -385,12 +388,13 @@ export const getNilaiMinimumLulusByJilid = (jilid: number): number => {
      id: "3",
      idSantri: "s3",
      tanggal: new Date().toISOString().split('T')[0],
-     jilid: 1,
-     halamanDari: 33,
-     halamanSampai: 35,
+     jilid: 5,
+     halamanDari: 10,
+     halamanSampai: 12,
      nilaiTartil: 90,
      nilaiFashohah: 88,
-     nilaiRataRata: 89,
+     nilaiTajwid: 85,
+     nilaiRataRata: 88,
      status: 'selesai',
    },
    {
@@ -398,8 +402,8 @@ export const getNilaiMinimumLulusByJilid = (jilid: number): number => {
      idSantri: "s4",
      tanggal: new Date().toISOString().split('T')[0],
      jilid: 4,
-     halamanDari: 10,
-     halamanSampai: 12,
+     halamanDari: 33,
+     halamanSampai: 35,
      nilaiTartil: 75,
      nilaiFashohah: 78,
      nilaiTajwid: 72,
@@ -408,11 +412,11 @@ export const getNilaiMinimumLulusByJilid = (jilid: number): number => {
    },
    {
      id: "5",
-     idSantri: "s5",
+     idSantri: "s7",
      tanggal: new Date().toISOString().split('T')[0],
      jilid: 2,
-     halamanDari: 38,
-     halamanSampai: 40,
+     halamanDari: 36,
+     halamanSampai: 38,
      nilaiTartil: 82,
      nilaiFashohah: 85,
      nilaiRataRata: 84,
@@ -420,17 +424,15 @@ export const getNilaiMinimumLulusByJilid = (jilid: number): number => {
    },
  ];
  
- // Mock santri untuk tilawah
- export const MOCK_SANTRI_TILAWAH = [
-   { id: "s1", nama: "Ahmad Fauzi", kelas: "3A", halaqoh: "Halaqoh 1", jilidSaatIni: 2, halamanSaatIni: 17 },
-   { id: "s2", nama: "Fatimah Zahra", kelas: "4B", halaqoh: "Halaqoh 2", jilidSaatIni: 3, halamanSaatIni: 24 },
-   { id: "s3", nama: "Muhammad Rizki", kelas: "3A", halaqoh: "Halaqoh 1", jilidSaatIni: 1, halamanSaatIni: 35 },
-   { id: "s4", nama: "Aisyah Putri", kelas: "5A", halaqoh: "Halaqoh 3", jilidSaatIni: 4, halamanSaatIni: 12 },
-   { id: "s5", nama: "Umar Abdullah", kelas: "4A", halaqoh: "Halaqoh 2", jilidSaatIni: 2, halamanSaatIni: 40 },
-   { id: "s6", nama: "Khadijah Sari", kelas: "6A", halaqoh: "Halaqoh 4", jilidSaatIni: 5, halamanSaatIni: 18 },
-   { id: "s7", nama: "Ali Imran", kelas: "3B", halaqoh: "Halaqoh 1", jilidSaatIni: 2, halamanSaatIni: 8 },
-   { id: "s8", nama: "Zainab Husna", kelas: "5B", halaqoh: "Halaqoh 3", jilidSaatIni: 4, halamanSaatIni: 28 },
- ];
+ // Santri tilawah view derived from centralized data
+ export const MOCK_SANTRI_TILAWAH = MOCK_SANTRI.map(s => ({
+   id: s.id,
+   nama: s.nama,
+   kelas: getKelasNama(s.idKelas),
+   halaqoh: getHalaqohNama(s.idHalaqoh),
+   jilidSaatIni: s.jilidSaatIni,
+   halamanSaatIni: s.halamanSaatIni,
+ }));
  
  // Statistik dashboard
  export const getDashboardStats = () => {

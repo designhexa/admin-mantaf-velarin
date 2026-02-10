@@ -1,8 +1,15 @@
 import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, FileText, TrendingUp, Upload } from "lucide-react";
+import { MOCK_SANTRI } from "@/lib/mock-data";
+import { mockSantriAkademik } from "@/lib/rapor-akademik-types";
 
 export default function AkademikDashboard() {
+  const totalSantri = MOCK_SANTRI.length;
+  const dataNilaiDiimpor = mockSantriAkademik.filter(s => s.statusNilai === "Lengkap").length;
+  const raporDigenerate = mockSantriAkademik.filter(s => s.statusRapor === "Sudah Generate").length;
+  const rataRataNilai = 84.5;
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -18,7 +25,7 @@ export default function AkademikDashboard() {
               <Users className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">0</div>
+              <div className="text-2xl font-bold">{totalSantri}</div>
               <p className="text-xs text-muted-foreground">Santri terdaftar</p>
             </CardContent>
           </Card>
@@ -29,8 +36,8 @@ export default function AkademikDashboard() {
               <Upload className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">0</div>
-              <p className="text-xs text-muted-foreground">Data nilai</p>
+              <div className="text-2xl font-bold">{dataNilaiDiimpor}</div>
+              <p className="text-xs text-muted-foreground">Data nilai lengkap</p>
             </CardContent>
           </Card>
 
@@ -40,7 +47,7 @@ export default function AkademikDashboard() {
               <FileText className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">0</div>
+              <div className="text-2xl font-bold">{raporDigenerate}</div>
               <p className="text-xs text-muted-foreground">Rapor akademik</p>
             </CardContent>
           </Card>
@@ -51,7 +58,7 @@ export default function AkademikDashboard() {
               <TrendingUp className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">-</div>
+              <div className="text-2xl font-bold">{rataRataNilai}</div>
               <p className="text-xs text-muted-foreground">Nilai akademik</p>
             </CardContent>
           </Card>
